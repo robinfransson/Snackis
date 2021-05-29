@@ -1,0 +1,169 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    /*-khtml-user-select: none;*/ /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+.navbar-icon {
+    font-size: 1.9rem !important;
+}
+.messages {
+    position: relative;
+}
+
+
+.messages-icon {
+    position: relative;
+}
+
+a {
+    color: inherit;
+}
+.message-count {
+    height:1.2rem;
+    width:1.2rem;
+    position:absolute;
+    right: -5px;
+    bottom: 1px;
+}
+
+
+.clickable {
+    cursor:pointer;
+}
+
+.message-container {
+    overflow-y: scroll;
+    position:relative;
+    max-height: 75%;
+    min-height: 75%;
+}
+    .message-container::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+/*.messages {
+}
+
+    .messages::-webkit-scrollbar {
+        display: none;*/ /* Safari and Chrome */
+    /*}*/
+.box {
+    flex-basis: auto;
+    margin: 25px auto;
+    margin-left: 50px;
+    margin-right: 50px;
+    background: #00bfb6;
+    padding: 20px;
+    text-align: center;
+    font-weight: 900;
+    color: #fff;
+    font-family: arial;
+    position: relative;
+}
+
+.sb1:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid #00bfb6;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #00bfb6;
+    border-bottom: 10px solid transparent;
+    right: -19px;
+    top: 6px;
+}
+.recieved-message{
+    max-width:75%;
+}
+.sb2:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid #00bfb6;
+    border-top: 10px solid #00bfb6;
+    border-bottom: 10px solid transparent;
+    left: -19px;
+    top: 6px;
+}
+
+.sb3:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid #00bfb6;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #00bfb6;
+    border-bottom: 10px solid transparent;
+    left: 19px;
+    bottom: -19px;
+}
+
+.sb4:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid #00bfb6;
+    border-top: 10px solid #00bfb6;
+    border-bottom: 10px solid transparent;
+    right: 19px;
+    bottom: -19px;
+}
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+.subforum:nth-child(odd) {
+    background-color: ;
+}
+.subforum:nth-child(even) {
+    background-color: lightblue;
+}

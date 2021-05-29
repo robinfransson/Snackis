@@ -1,0 +1,22 @@
+﻿@page
+@model Chat_test.Pages.ChatModel
+@{
+    ViewData["Title"] = "Chatt";
+}
+
+<div class="min-vw-100 vh-100 bg-info justify-content-center d-block pt-3">
+    @*<div class="mt-2 text-center font-weight-normal pb-2 border-bottom border-dark justify-content-center">
+        <div class="mt-2 text-center">Chatt</div>
+        <div class="">Hämtar 6-19 slumpade ord från https://random-word-api.herokuapp.com</div>
+        <div>50/50 om man "skickar" eller "tar emot" ett meddelande</div>
+    </div>*@
+
+    <div class="container py-1 message-container d-block">
+        <div class="messages bg-info d-block">
+        </div>
+
+    </div>
+    <div class="row justify-content-center pt-3">
+        <button class="add-message btn btn-outline-dark btn-success">Lägg till ett meddelande</button>
+    </div>
+</div>

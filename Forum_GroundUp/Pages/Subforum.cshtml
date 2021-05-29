@@ -1,0 +1,74 @@
+﻿@page "{id:int?}"
+
+@model SnackisForum.Pages.SubforumModel
+@{
+    ViewData["Title"] = Model.Subforum != null ? Model.Subforum.Name : "Fel";
+}
+@if (Model.Subforum is null)
+{
+    <h1>Felaktigt delforum</h1>
+}
+else
+{
+
+    <div class="container-fluid rounded bg-secondary w-75">
+        <div class="container w-75 bg-dark text-light rounded mt-3 pb-1">
+
+            <div class="col subforum-main">
+                <h1 class="pt-3 ps-3">@Model.Subforum.Name</h1>
+                <table class="table table-borderless table-hover table-striped table-dark">
+                    <thead class="">
+                        <tr>
+
+                            <td class="w-50" style="min-width: 50%; max-width: 50%">
+                                <div class="ps-3">Tråd</div>
+                            </td>
+
+                            <td class="w-25" style="min-width: 25%; max-width: 25%">
+                            </td>
+
+                            <td class="w-25" style="min-width: 25%; max-width: 25%">
+                                <div class="text-center">Senaste inlägg</div>
+                            </td>
+                        </tr>
+                    </thead>
+                    @foreach (var thread in Model.Subforum.Threads)
+                    {
+                        @if (!Model.Subforum.Threads.Any())
+                        {
+                            break;
+                        }
+
+                        int posts = thread.Replies.Count;
+                        var lastReply = thread.Replies.OrderByDescending(reply => reply.DatePosted).FirstOrDefault();
+                <tr>
+                    <td class="w-50" style="min-width: 50%; max-width: 50%">
+                        <div class="ps-3"><a href="@Url.Content($"~/Thread/{thread.ID}")">@thread.Title</a></div>
+
+                        <div class="ps-3 font-monospace" style="font-size:75%;">@thread.CreatedBy.UserName</div>
+                    </td>
+
+                    <td class="w-25" style="min-width: 50%; max-width: 50%">
+                        <div class="text-end">@thread.Views visningar</div>
+                        <div class="text-end">@thread.Replies.Count svar</div>
+                    </td>
+                    <td class="w-50" style="min-width: 50%; max-width: 50%">
+                        @if (lastReply is null)
+                        {
+
+                            <div class="text-end pe-3">Inga inlägg</div>
+                        }
+                        else
+                        {
+                    <div class="font-monospace text-end pe-3" style="font-size:75%;"> @lastReply.DaysAgo()</div>
+                            <div class="font-monospace text-end pe-3" style="font-size:75%;">av @lastReply.Poster.UserName</div>
+                        }
+                    </td>
+                </tr>
+
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}

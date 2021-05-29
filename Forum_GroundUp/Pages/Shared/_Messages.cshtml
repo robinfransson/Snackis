@@ -1,0 +1,24 @@
+﻿
+@inject SnackisForum.Injects.UserProfile profile;
+@{
+}
+
+
+<div class="messages me-3" style="cursor: pointer;">
+    <div>
+        <div class="navbar-icon material-icons-outlined text-white messages-icon">
+            markunread
+        </div>
+
+        <div class="rounded-circle message-count text-danger text-center bg-white" style="font-size:0.7rem;">
+            @if (profile.UnreadMessages > 9)
+            {
+                @Html.Raw("9+")
+            }
+            else
+            {
+                @profile.UnreadMessages
+            }
+        </div>
+    </div>
+</div>
