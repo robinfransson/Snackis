@@ -5,31 +5,65 @@ let timesRan = 0;
 let autoScroll = true;
 
 var token = $('input[name="__RequestVerificationToken"]').val();
+
+
+let path = window.location.pathname.toLowerCase();
+
+function getThreadReplies() {
+
+    let threadID = path.split('/').reverse()[0];
+    $.ajax({
+        type: 'GET',
+        url: '/ajax?handler=replies',
+        data: { "id": threadID },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            createTree(result);
+        }
+    });
+}
+
+
+function loadComment(id) {
+    $.get('/ajax?handler=LoadComment', { id : id }, function (result) {
+        console.log(result);
+    })
+}
+
+
+function createTree(data) {
+
+    $('.jstree')
+        .on('click', '.jstree-anchor', function (e) {
+            $('.jstree').jstree(true).toggle_node(e.target);
+        })
+        .on("select_node.jstree", function (e, data) {
+            e.preventDefault();
+            e.stopPropagation();
+            loadComment(data.node.id);
+        }).jstree({
+            'themes': {
+               "icons":false
+            },
+            'plugins' : [ "material" ],
+            'core': {
+            
+                'data': data,
+                dblclick_toggle: false,
+                expand_selected_onload: false       
+        }
+    });
+}
+
 $(document).ready(function () {
 
-    let path = window.location.pathname.toLowerCase();
+
     if (path.split("/").includes("thread")) {
-        let threadID = path.split('/').reverse()[0];
-        console.log(threadID);
-
-        debugger;
-        $('.jstree').jstree({
-            'core': {
-                'data': {
-                    'url': path + "?handler=replies?id=" + threadID,
-                    'data': function (node) {
-
-                        debugger;
-                        console.log(node);
-                        return {
-                            'id': node.id,
-                            'parent': node.parent,
-                            'text': node.text
-                        };
-                    }
-                }
-            }
-        });
+        getThreadReplies();
+        //$('.jstree').on("show_node.jstree", function (e, data) {
+        //    console.log(data.selected);
+        //});
     }
 
 
@@ -37,9 +71,9 @@ $(document).ready(function () {
 
 
     $('.messages').hover(function () {
-        console.log("hovered over messages");
-        $('.messages-icon').text("drafts");
-    });
+    console.log("hovered over messages");
+    $('.messages-icon').text("drafts");
+});
 
 
 
@@ -50,10 +84,10 @@ $(document).ready(function () {
 
 
 
-    $('.messages').mouseleave(function () {
-        console.log("mouse left messages");
-        $('.messages-icon').text("markunread");
-    });
+$('.messages').mouseleave(function () {
+    console.log("mouse left messages");
+    $('.messages-icon').text("markunread");
+});
 
 
 
@@ -63,72 +97,72 @@ $(document).ready(function () {
 
 
 
-    $('.login-form').on('submit', function (e) {
-        e.preventDefault();
-        let data = ($(this).serialize());
-        console.log(data);
-        let dataw = JSON.stringify(data);
-        console.log(dataw);
-        $.post("/Account?handler=login", data, function (result) {
-            console.log(result);
-            if (result.success == false) {
-                alert('wrong username or password');
-            }
-            else {
-
-                window.location.replace("/");
-            }
-        });
-    })
-
-    $('#registerForm').on('submit', function (e) {
-        e.preventDefault();
-        let data = ($(this).serialize());
-        console.log(data);
-        let dataw = JSON.stringify(data);
-        console.log(dataw);
-        $.post("/Account?handler=Register", data, function (result) {
-
-            console.log(result);
-            if (result.hasOwnProperty('exception')) {
-                alert('Exception! \n' + result.exception + '\n' + result.inner);
-            }
-            else if (result.success == true) {
-                window.location.replace("/");
-            }
-            else if (result.success == false){
-                alert('could not log in, try again');
-            }
-        });
-    })
-
-
-    $('#logout').on('click', function (e) {
-        e.preventDefault();
-        
-    })
-
-    $(".add-message").click(function () {
-        chatLoad();
-    })
-    $('.message-container').scroll(function () {
-        if ($(this).scrollTop() +
-            $(this).innerHeight() >=
-            $(this)[0].scrollHeight - 1) {
-            console.log("end reached");
-            autoScroll = true;
+$('.login-form').on('submit', function (e) {
+    e.preventDefault();
+    let data = ($(this).serialize());
+    console.log(data);
+    let dataw = JSON.stringify(data);
+    console.log(dataw);
+    $.post("/ajax?handler=login", data, function (result) {
+        console.log(result);
+        if (result.success == false) {
+            alert('wrong username or password');
         }
         else {
-            let value = $(this).scrollTop() + $(this).innerHeight();
-            console.log("scrollTop = " + $(this).scrollTop() + "\ninner height = " +
-                $(this).innerHeight() + "\n scroll height = " +
-                $(this)[0].scrollHeight)
-            console.log("value to match : " + value)
-            console.log($(this)[0].scrollHeight);
-            console.log("end not reached");
-            autoScroll = false;
+
+            window.location.replace("/");
         }
     });
+})
+
+$('#registerForm').on('submit', function (e) {
+    e.preventDefault();
+    let data = ($(this).serialize());
+    console.log(data);
+    let dataw = JSON.stringify(data);
+    console.log(dataw);
+    $.post("/ajax?handler=Register", data, function (result) {
+
+        console.log(result);
+        if (result.hasOwnProperty('exception')) {
+            alert('Exception! \n' + result.exception + '\n' + result.inner);
+        }
+        else if (result.success == true) {
+            window.location.replace("/");
+        }
+        else if (result.success == false) {
+            alert('could not log in, try again');
+        }
+    });
+})
+
+
+$('#logout').on('click', function (e) {
+    e.preventDefault();
+
+})
+
+$(".add-message").click(function () {
+    chatLoad();
+})
+$('.message-container').scroll(function () {
+    if ($(this).scrollTop() +
+        $(this).innerHeight() >=
+        $(this)[0].scrollHeight - 1) {
+        console.log("end reached");
+        autoScroll = true;
+    }
+    else {
+        let value = $(this).scrollTop() + $(this).innerHeight();
+        console.log("scrollTop = " + $(this).scrollTop() + "\ninner height = " +
+            $(this).innerHeight() + "\n scroll height = " +
+            $(this)[0].scrollHeight)
+        console.log("value to match : " + value)
+        console.log($(this)[0].scrollHeight);
+        console.log("end not reached");
+        autoScroll = false;
+    }
+});
 });
 
 
@@ -183,7 +217,7 @@ function getMessage(data) {
 
 function scrollAuto() {
     var element = $('.messages-container');
-    if (element.scrollTop == (element.scrollHeight - element.offsetHeight)) { 
+    if (element.scrollTop == (element.scrollHeight - element.offsetHeight)) {
         return true;
     }
     return false;
@@ -191,17 +225,17 @@ function scrollAuto() {
 async function chatLoad() {
     if (timesRan < 100) {
         timesRan++;
-    $.get(url, function (data) {
-        console.log(scrollAuto());
-        $(".messages").append(getMessage(data));
-        console.log(autoScroll);
-        if (autoScroll) {
-            setTimeout(2000);
-            $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
-        }
+        $.get(url, function (data) {
+            console.log(scrollAuto());
+            $(".messages").append(getMessage(data));
+            console.log(autoScroll);
+            if (autoScroll) {
+                setTimeout(2000);
+                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
+            }
 
-        
-    })
+
+        })
     }
 }
 

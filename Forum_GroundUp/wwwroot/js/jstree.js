@@ -4980,7 +4980,40 @@
  *
  * This plugin adds more information to the `changed.jstree` event. The new data is contained in the `changed` event data property, and contains a lists of `selected` and `deselected` nodes.
  */
+	$.jstree.plugins.material = function (options, parent) {
+		this.teardown = function () {
+			this.element.find(".material-icons").remove();
+			parent.teardown.call(this);
+		};
 
+		this.redraw_node = function (obj, deep, is_callback, force_render) {
+			obj = parent.redraw_node.apply(this, arguments);
+
+			if (obj) {
+				var i,
+					j,
+					tmp = null,
+					icon = null,
+					temp = null;
+
+				for (i = 0, j = obj.childNodes.length; i < j; i++) {
+					if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
+						tmp = obj.childNodes[i];
+						break;
+					}
+				}
+
+				if (tmp) {
+					if (this._model.data[obj.id].icon && this._model.data[obj.id].icon.length) {
+						tmp.childNodes[0].className += " material-icons";
+						tmp.childNodes[0].innerHTML = this._model.data[obj.id].icon;
+					}
+				}
+			}
+
+			return obj;
+		}
+	}
 	$.jstree.plugins.changed = function (options, parent) {
 		var last = [];
 		this.trigger = function (ev, data) {

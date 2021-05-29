@@ -1,6 +1,29 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+.jstree-default a {
+    white-space: normal !important;
+    height: auto;
+}
+
+.jstree-anchor {
+    height: auto !important;
+}
+
+.jstree-default li > ins {
+    vertical-align: top;
+}
+
+.jstree-leaf {
+    height: auto;
+}
+
+    .jstree-leaf a {
+        height: auto !important;
+    }
+
+
+
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

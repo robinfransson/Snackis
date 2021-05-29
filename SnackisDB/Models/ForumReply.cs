@@ -1,6 +1,7 @@
 ﻿using SnackisDB.Models.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +37,13 @@ namespace SnackisDB.Models
             {
                 return $"igår {hours}:{minutes}";
             }
-            else
+            else if(daysAgo < 8)
             {
                 return $"för {Math.Round(daysAgo,0)} dagar sedan";
+            }
+            else
+            {
+                return $"{DatePosted.ToShortTimeString()} {hours}:{minutes}";
             }
         }
         public int ID { get; set; }
@@ -51,6 +56,7 @@ namespace SnackisDB.Models
         public string Content { get; set; }
         public string ReplyTitle { get; set; }
         public virtual SnackisUser Poster { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime DatePosted { get; set; }
     }
 }

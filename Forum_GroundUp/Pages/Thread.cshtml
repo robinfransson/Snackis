@@ -1,11 +1,70 @@
-﻿@page "{id:int?}"
+﻿@page "{id:int?}/{sheet:int?}"
 @model SnackisForum.Pages.ThreadModel
+@inject SnackisContext context;
 @using SnackisDB.Models;
-@{ }
-<script>
+@{
+    ViewData["Title"] = Model.Thread.Title;
+    if (ViewData["Ajax"] != null)
+    {
+        Layout = null;
+    }
+}
+<div class="container mt-3 pb-2 rounded bg-light h-100 text-dark ">
+    <div class="text-center row border-bottom">
+        <div class="h3 pt-1">@Model.Thread.Title</div>
+        <div class="py-1 ">av @Model.Thread.CreatedBy.UserName @Model.CreatedOn</div>
 
-</script>
-<div class="container-fluid h-100 px-5 text-dark bg-white">@Model.Thread.Title</div>
-<div class="container-fluid h-100 px-5 text-dark bg-white">@Model.Thread.Body</div>
+    </div>
+    @foreach (var reply in Model.Thread.Replies)
+    {
+        var user = reply.Poster;
+        var parentComment = reply.ParentComment;
+        bool hasParentComment = parentComment != null;
+<div class="row border-bottom ">
+    <div class="col-1 pt-2">
 
-<div class="jstree"></div>
+        @user.UserName
+        <div style="font-size:75%">Gick med</div>
+        <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
+
+    </div>
+
+    <div class="col text-break border-start">
+        <div class="row">
+            @if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
+            {
+
+
+                <div class="border-bottom fw-bold ps-3">@reply.ReplyTitle</div>
+            }
+            else
+            {
+
+            }
+            @if (hasParentComment)
+            {
+                <div class="border rounded ms-3 my-2 me-0 border-dark w-75 text-break overflow-scroll">
+                    @if (!string.IsNullOrWhiteSpace(parentComment.ReplyTitle))
+                    {
+                        <b>@parentComment.ReplyTitle</b>
+                    }
+                    <div class="mb-1">@parentComment.Content</div>
+                    <div>av @parentComment.Poster.UserName @parentComment.DaysAgo()</div>
+                </div>
+            }
+            <div>
+                @reply.Content
+            </div>
+            <div>@reply.DaysAgo()</div>
+            <div class="border-top ps-3">
+                <a href="">Svara</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    }
+</div>
+
+@*<div class="jstree ps-5"></div>*@
