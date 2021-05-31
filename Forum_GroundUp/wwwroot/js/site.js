@@ -110,7 +110,7 @@ $('.login-form').on('submit', function (e) {
         }
         else {
 
-            window.location.replace("/");
+            window.location.reload();
         }
     });
 })
@@ -128,7 +128,7 @@ $('#registerForm').on('submit', function (e) {
             alert('Exception! \n' + result.exception + '\n' + result.inner);
         }
         else if (result.success == true) {
-            window.location.replace("/");
+            window.location.reload();
         }
         else if (result.success == false) {
             alert('could not log in, try again');
@@ -170,7 +170,7 @@ $('.message-container').scroll(function () {
 
 function logout() {
     $.ajax({
-        url: "/Account?handler=Logout",
+        url: "/ajax?handler=Logout",
         dataType: 'json',
 
         type: 'post', //get form GET/POST method
@@ -179,7 +179,7 @@ function logout() {
         },
         success: function (result) {
             if (result.hasOwnProperty('loggedout')) {
-                window.location.replace("/");
+                window.location.reload();
                 console.log("yay");
             }
             else {
@@ -187,16 +187,19 @@ function logout() {
             }
         },
     })
+        .fail(function () {
+            alert('Could not log out!');
+        })
         .done(function (result) {
 
-            debugger;
-            if (result.hasOwnProperty('loggedout')) {
-                window.location.replace("/");
-                console.log("yay");
-            }
-            else {
-                alert('could not log out, try again');
-            }
+            //debugger;
+            //if (result.hasOwnProperty('loggedout')) {
+            //    window.location.replace("/");
+            //    console.log("yay");
+            //}
+            //else {
+            //    alert('could not log out, try again');
+            //}
         });
 }
 function getMessage(data) {

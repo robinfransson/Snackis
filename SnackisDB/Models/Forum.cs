@@ -15,7 +15,7 @@ namespace SnackisDB.Models
         public int ID { get; set; }
         [Required]
         public string Name { get; set; }
-        public List<SnackisUser>? Moderators { get; set; }
+        public List<SnackisUser> Moderators { get; set; }
         public List<Subforum> Subforums { get; set; }
     }
 }

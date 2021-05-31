@@ -1,6 +1,7 @@
 ﻿using SnackisDB.Models.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,18 @@ namespace SnackisDB.Models
 {
     public class ForumReply
     {
+        
+        public int ID { get; set; }
+
+        public ForumThread Thread { get; set; }
+        public SnackisUser Author { get; set; }
+        public SnackisUser ReplyTo { get; set; }
+        public ForumReply RepliedComment { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public string ReplyText { get; set; }
+        public DateTime DatePosted { get; set; }
+
         public string DaysAgo()
         {
 
@@ -37,26 +50,14 @@ namespace SnackisDB.Models
             {
                 return $"igår {hours}:{minutes}";
             }
-            else if(daysAgo < 8)
+            else if (daysAgo < 8)
             {
-                return $"för {Math.Round(daysAgo,0)} dagar sedan";
+                return $"för {Math.Round(daysAgo, 0)} dagar sedan";
             }
             else
             {
                 return $"{DatePosted.ToShortTimeString()} {hours}:{minutes}";
             }
         }
-        public int ID { get; set; }
-        public virtual ForumThread ParentThread { get; set; }
-
-        public virtual ForumReply ParentComment { get; set; }
-
-        public virtual List<ForumReply> Replies { get; set; }
-
-        public string Content { get; set; }
-        public string ReplyTitle { get; set; }
-        public virtual SnackisUser Poster { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime DatePosted { get; set; }
     }
 }

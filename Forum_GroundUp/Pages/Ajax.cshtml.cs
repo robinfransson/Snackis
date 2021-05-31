@@ -48,7 +48,8 @@ namespace SnackisForum.Pages
                 var user = new SnackisUser
                 {
                     UserName = username,
-                    Email = email
+                    Email = email,
+                    CreatedOn = DateTime.UtcNow
                 };
                 if (_userManager is null)
                 {
@@ -106,50 +107,51 @@ namespace SnackisForum.Pages
         }
 
 
-        public async Task<JsonResult> OnGetRepliesAsync(int id)
-        {
-            ViewData["ajax"] = true;
-            // Alternative format of the node (id & parent are required)
-            //          {
-            //              id: "string" // required
-            //parent: "string" // required
-            //text: "string" // node text
-            //icon: "string" // string for custom
-            //state:
-            //              {
-            //                  opened: boolean  // is the node open
-            //              disabled  : boolean  // is the node disabled
-            //              selected  : boolean  // is the node selected
-            //},
-            //li_attr: { }  // attributes for the generated LI node
-            //              a_attr: { }  // attributes for the generated A node
-            //          }
-            //      }
+        //public async Task<JsonResult> OnGetRepliesAsync(int id)
+        //{
+        //    ViewData["ajax"] = true;
+        //    // Alternative format of the node (id & parent are required)
+        //    //          {
+        //    //              id: "string" // required
+        //    //parent: "string" // required
+        //    //text: "string" // node text
+        //    //icon: "string" // string for custom
+        //    //state:
+        //    //              {
+        //    //                  opened: boolean  // is the node open
+        //    //              disabled  : boolean  // is the node disabled
+        //    //              selected  : boolean  // is the node selected
+        //    //},
+        //    //li_attr: { }  // attributes for the generated LI node
+        //    //              a_attr: { }  // attributes for the generated A node
+        //    //          }
+        //    //      }
 
-            var o = await _context.Threads.Where(thread => thread.ID == id)?
-                                              .Include(thread => thread.Replies)
-                                                 .ThenInclude(replies => replies.Poster)
-                                        .Select(thread => thread.Replies.Select(reply =>
-                                        new
-                                        {
-                                            id = reply.ID.ToString(),
-                                            parent = reply.ParentComment == null ? "#" : reply.ParentComment.ID.ToString(),
-                                            text = $"{reply.ReplyTitle} <span style='font-size: 75%'>av {reply.Poster.UserName} {reply.DaysAgo()}</span>" +
-                                            $"<div class='ms-4'>Visa Svara</div>",
-                                            state = new
-                                            {
-                                                opened = reply.Replies.Any()
-                                            },
-                                            icon = "comment"
-                                        })).ToListAsync();
-            var returnValue = o[0];
-            return new JsonResult(returnValue);
-        }
+        //    var o = await _context.Threads.Where(thread => thread.ID == id)?
+        //                                      .Include(thread => thread.Replies)
+        //                                         .ThenInclude(replies => replies.Poster)
+        //                                         .AsSingleQuery()
+        //                                .Select(thread => thread.Replies.Select(reply =>
+        //                                new
+        //                                {
+        //                                    id = reply.ID.ToString(),
+        //                                    parent = reply.ParentComment == null ? "#" : reply.ParentComment.ID.ToString(),
+        //                                    text = $"{reply.ReplyTitle} <span style='font-size: 75%'>av {reply.Poster.UserName} {reply.DaysAgo()}</span>" +
+        //                                    $"<div class='ms-4'>Visa Svara</div>",
+        //                                    state = new
+        //                                    {
+        //                                        opened = reply.Replies.Any()
+        //                                    },
+        //                                    icon = "comment"
+        //                                })).ToListAsync();
+        //    var returnValue = o[0];
+        //    return new JsonResult(returnValue);
+        //}
         public async Task<JsonResult> OnGetLoadCommentAsync(int id)
         {
             var comment = await _context.Replies.Where(reply => reply.ID == id)
-                .Include(reply => reply.Poster).FirstOrDefaultAsync();
-            var returnValue = new { comment = comment.Content, poster = comment.Poster.UserName, title = comment.ReplyTitle, date = comment.DaysAgo()};
+                .Include(reply => reply.Author).FirstOrDefaultAsync();
+            var returnValue = new { comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo()};
             return new JsonResult(returnValue);
         }
 

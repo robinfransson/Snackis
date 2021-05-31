@@ -10,8 +10,8 @@ using SnackisDB.Models;
 namespace SnackisDB.Migrations
 {
     [DbContext(typeof(SnackisContext))]
-    [Migration("20210525112246_1231231231231231111")]
-    partial class _1231231231231231111
+    [Migration("20210530221236_test11")]
+    partial class test11
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -178,19 +178,30 @@ namespace SnackisDB.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentThreadID")
+                    b.Property<DateTime>("DatePosted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ForumThreadID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCommentID")
                         .HasColumnType("int");
 
                     b.Property<string>("PosterId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ReplyTitle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("ParentThreadID");
+                    b.HasIndex("ForumThreadID");
+
+                    b.HasIndex("ParentCommentID");
 
                     b.HasIndex("PosterId");
 
-                    b.ToTable("ForumReply");
+                    b.ToTable("Replies");
                 });
 
             modelBuilder.Entity("SnackisDB.Models.ForumThread", b =>
@@ -200,8 +211,18 @@ namespace SnackisDB.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DatePosted")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastReplyID")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ParentID")
                         .HasColumnType("int");
@@ -216,9 +237,11 @@ namespace SnackisDB.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("LastReplyID");
+
                     b.HasIndex("ParentID");
 
-                    b.ToTable("ForumThread");
+                    b.ToTable("Threads");
                 });
 
             modelBuilder.Entity("SnackisDB.Models.Identity.SnackisUser", b =>
@@ -232,6 +255,10 @@ namespace SnackisDB.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -337,6 +364,9 @@ namespace SnackisDB.Migrations
                     b.Property<int?>("ForumID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("LastReplyID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -345,7 +375,9 @@ namespace SnackisDB.Migrations
 
                     b.HasIndex("ForumID");
 
-                    b.ToTable("Subforum");
+                    b.HasIndex("LastReplyID");
+
+                    b.ToTable("Subforums");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -401,15 +433,19 @@ namespace SnackisDB.Migrations
 
             modelBuilder.Entity("SnackisDB.Models.ForumReply", b =>
                 {
-                    b.HasOne("SnackisDB.Models.ForumThread", "ParentThread")
+                    b.HasOne("SnackisDB.Models.ForumThread", null)
                         .WithMany("Replies")
-                        .HasForeignKey("ParentThreadID");
+                        .HasForeignKey("ForumThreadID");
+
+                    b.HasOne("SnackisDB.Models.ForumReply", "ParentComment")
+                        .WithMany("Replies")
+                        .HasForeignKey("ParentCommentID");
 
                     b.HasOne("SnackisDB.Models.Identity.SnackisUser", "Poster")
                         .WithMany()
                         .HasForeignKey("PosterId");
 
-                    b.Navigation("ParentThread");
+                    b.Navigation("ParentComment");
 
                     b.Navigation("Poster");
                 });
@@ -420,11 +456,17 @@ namespace SnackisDB.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("SnackisDB.Models.ForumReply", "LastReply")
+                        .WithMany()
+                        .HasForeignKey("LastReplyID");
+
                     b.HasOne("SnackisDB.Models.Subforum", "Parent")
                         .WithMany("Threads")
                         .HasForeignKey("ParentID");
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("LastReply");
 
                     b.Navigation("Parent");
                 });
@@ -441,6 +483,12 @@ namespace SnackisDB.Migrations
                     b.HasOne("SnackisDB.Models.Forum", null)
                         .WithMany("Subforums")
                         .HasForeignKey("ForumID");
+
+                    b.HasOne("SnackisDB.Models.ForumReply", "LastReply")
+                        .WithMany()
+                        .HasForeignKey("LastReplyID");
+
+                    b.Navigation("LastReply");
                 });
 
             modelBuilder.Entity("SnackisDB.Models.Forum", b =>
@@ -448,6 +496,11 @@ namespace SnackisDB.Migrations
                     b.Navigation("Moderators");
 
                     b.Navigation("Subforums");
+                });
+
+            modelBuilder.Entity("SnackisDB.Models.ForumReply", b =>
+                {
+                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("SnackisDB.Models.ForumThread", b =>

@@ -35,7 +35,11 @@ namespace SnackisForum.Pages
         {
             Subforum = _context.Subforums.Where(subforum => subforum.ID == id)?.Include(sub => sub.Threads)
                                                                                    .ThenInclude(thread => thread.Replies)
-                                                                                        .ThenInclude(reply => reply.Poster).FirstOrDefault();
+                                                                                       .ThenInclude(thread => thread.Author)
+                                                                                .Include(sub => sub.Threads)
+                                                                                        .ThenInclude(thread => thread.CreatedBy)
+                                                                                .OrderByDescending(thread => thread.LastReply)
+                                                                                .FirstOrDefault();
         }
     }
 }

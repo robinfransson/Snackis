@@ -28,25 +28,30 @@ namespace Chat_test
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            //services.AddLiveReload();
+            services.AddLiveReload();
             services.AddHttpContextAccessor();
+
             services.AddScoped<SnackisForum.Injects.UserProfile>();
 
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
-            services.AddDbContext<SnackisContext>(configure =>
+            services.AddDbContext<SnackisContext>(options =>
             {
-                configure.UseSqlServer(Configuration.GetConnectionString("database"));
+                options.UseSqlServer(Configuration.GetConnectionString("database"));
             });
+
+
+
+
             services.AddHttpClient();
 
             services.AddIdentity<SnackisUser, IdentityRole>(options =>
             {
 
-                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 1;
+                options.Password.RequiredLength = 5;
             })
                 .AddEntityFrameworkStores<SnackisContext>()
                 .AddDefaultTokenProviders();
@@ -59,7 +64,7 @@ namespace Chat_test
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseLiveReload();
+                app.UseLiveReload();
             }
             else
             {

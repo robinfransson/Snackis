@@ -29,5 +29,6 @@ namespace SnackisDB.Models
 
         public List<ForumThread> Threads { get; set; }
         public ForumReply LastReply { get; set; }
+        //public ForumReply LastReply => this.Threads.OrderByDescending(thread => thread.LastReply.DatePosted).Select(thread => thread.LastReply).FirstOrDefault();
     }
 }

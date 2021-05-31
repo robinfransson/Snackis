@@ -12,7 +12,6 @@ namespace SnackisDB.Models.Identity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ForumUserID { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedOn { get; set; }
     }
 }

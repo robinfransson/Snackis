@@ -17,7 +17,7 @@ namespace SnackisDB.Models
         public string Body { get; set; }
         public virtual Subforum Parent { get; set; }
         public List<ForumReply> Replies { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime DatePosted { get; set; }
+        public DateTime CreatedOn { get; set; }
+        //public ForumReply LastReply { get; set; }/*=> this.Replies.OrderBy(reply => reply.DatePosted).FirstOrDefault();*/
     }
 }

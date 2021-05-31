@@ -29,7 +29,7 @@ namespace Chatt_test.Pages
         {
             Forums = context.Forums.Include(forum => forum.Subforums)
                                         .ThenInclude(sub => sub.LastReply)
-                                            .ThenInclude(reply => reply.Poster)
+                                            .ThenInclude(reply => reply.Author)
                                    .Include(forum => forum.Subforums)
                                         .ThenInclude(sub => sub.Threads)
                                             .ThenInclude(thread => thread.Replies)
