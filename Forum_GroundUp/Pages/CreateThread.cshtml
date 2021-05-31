@@ -22,7 +22,7 @@
 
                 <div class="input-group flex-nowrap mt-2">
 
-                    <textarea class="form-control" placeholder="Text" aria-label="Inläggstext" 
+                    <textarea class="form-control" placeholder="Text" aria-label="Inläggstext" required minlength="20" maxlength="250"
                               aria-describedby="addon-wrapping" style="height:10rem;" asp-for="Reply.Body"></textarea>
                 </div>
                 <div class="input-group justify-content-center mt-2">
@@ -34,7 +34,7 @@
     else
             {
                 <div class="">
-                    <div class="h1">Du behöver <span onclick="$('dropdown-menu').dropdown('show')" class="text-decoration-underline text-info" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="cursor: pointer;z-index:1">logga in</span> för att göra ett inlägg</div>
+                    <div class="h1">Du behöver <span onclick="$('#dropdownmenu').children().toggleClass('show')" class="text-decoration-underline text-info noselect" style="cursor: pointer;z-index:1">logga in</span> för att göra ett inlägg</div>
                 </div>
             }
     </div>

@@ -65,11 +65,22 @@ else
                                         <div class="text-end pe-3">Inga inlägg</div>
                                     }
                                     else
-                                    {
-                                        <div class="font-monospace text-end pe-3" style="font-size:75%;"> @lastReply.DaysAgo()</div>
-                                        <div class="font-monospace text-end pe-3" style="font-size:75%;">av @lastReply.Author.UserName</div>
-                                    }
-                                </td>
+                                    {//
+                                     //
+                                     //
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DaysAgo()</div>
+                                                <div class="font-monospace text-end" style="font-size:75%;">av @lastReply.Author.UserName</div>
+                                            </div>
+                                            <div class="col me-4" style="max-width:3rem" >
+                                                <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="@lastReply.ID" data-thread-id="@thread.ID">
+                                                    arrow_right
+                                                </span>
+                                            </div>
+                                            </div>
+                                            }
+                                    </td>
                             </tr>
 
                         }

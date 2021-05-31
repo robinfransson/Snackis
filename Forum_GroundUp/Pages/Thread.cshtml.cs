@@ -16,6 +16,9 @@ namespace SnackisForum.Pages
     public class ThreadModel : PageModel
     {
         public ForumThread Thread { get; set; }
+
+
+        public int PageNumber { get; set; }
         public bool IsLoggedIn { get; set; }
         public DateTime CreatedOn { get; set; }
         private readonly UserManager<SnackisUser> _userManager;
@@ -35,21 +38,32 @@ namespace SnackisForum.Pages
             _context = context;
             _signInManager = signInManager;
         }
-        public void OnGet(int id, int sheet)
+        public IActionResult OnGet(int id, int pageNumber)
         {
+            if(pageNumber > 0)
+            {
+                pageNumber--;
+            }
             Thread = _context.Threads.Where(thread => thread.ID == id)?
                                         .Include(thread => thread.Replies)
                                             .ThenInclude(replies => replies.Author)
 
                                      .FirstOrDefault();
+            double maxPageInteger = Math.Ceiling(Thread.Replies.Count / 10d);
+
             CreatedOn = Thread.Replies.OrderBy(reply => reply.DatePosted).First().DatePosted;
+            if(!Thread.Replies.Any() || pageNumber > maxPageInteger)
+            {
+                return RedirectToPage("Thread", new { id, pageNumber = maxPageInteger });
+            }
             Thread.Replies = Thread.Replies
                                    .OrderBy(reply => reply.DatePosted)
-                                   .Skip(sheet * 10)
+                                   .Skip(pageNumber * 10)
                                    .Take(10)
                                    .ToList();
-
+            PageNumber = pageNumber;
             IsLoggedIn = _signInManager.IsSignedIn(User);
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int id)

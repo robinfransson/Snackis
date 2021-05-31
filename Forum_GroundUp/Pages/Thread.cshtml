@@ -1,10 +1,11 @@
-﻿@page "{id:int?}/{sheet:int?}"
+﻿@page "{id:int?}/{pageNumber:int?}"
 @model SnackisForum.Pages.ThreadModel
 @inject SnackisContext context;
 @inject SnackisForum.Injects.UserProfile userProfile;
 @using SnackisDB.Models;
 @{
 
+    int postNumber = Model.PageNumber == 0 ? 1 : (Model.PageNumber * 10)+ 1;
     ViewData["Title"] = Model.Thread.Title;
     if (ViewData["Ajax"] != null)
     {
@@ -19,13 +20,14 @@
 
         </div>
 
-    </div>
+    </div> 
     @foreach (var reply in Model.Thread.Replies)
     {
         var user = reply.Author;
         var parentComment = reply.ReplyText;
         bool hasParentComment = parentComment != null;
-        string datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
+        string datePosted = "";
+        datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
         <div class="row border-bottom border-secondary ">
             <div class="col-1 pt-2">
 
@@ -39,8 +41,8 @@
                 <div class="row text-break text-wrap ">
                     <div class="border-bottom border-secondary w-100">
                         <div class="row w-100">
-                            <div class="col">@datePosted</div>
-                            <div class="col text-end">#1</div>
+                            <div class="col">@reply.DaysAgo()</div>
+                            <div class="col text-end">#@postNumber</div>
                         </div>
                     </div>
                     @*@if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
@@ -75,7 +77,7 @@
 
             </div>
         </div>
-
+        postNumber++;
     }
     @if(Model.IsLoggedIn)
     { 

@@ -29,7 +29,7 @@ namespace SnackisForum.Pages
         private readonly ILogger<AjaxModel> _logger;
 
 
-        public CreateThreadModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager, 
+        public CreateThreadModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
             SnackisContext context, ILogger<AjaxModel> logger)
         {
             _userManager = userManager;
@@ -47,33 +47,33 @@ namespace SnackisForum.Pages
 
         public async Task<IActionResult> OnPost(int id)
         {
-            try { 
-            var currentTime = DateTime.Now;
-            var subforum = await _context.Subforums.Where(sub => sub.ID == id)
-                                                   .Include(sub => sub.Threads)
-                                                   .ThenInclude(thread => thread.Replies)
-                                                   .FirstOrDefaultAsync();
-            var user = await _userManager.GetUserAsync(User);
+            try
+            {
+                var currentTime = DateTime.Now;
+                var subforum = await _context.Subforums.Where(sub => sub.ID == id)
+                                                       .Include(sub => sub.Threads)
+                                                       .ThenInclude(thread => thread.Replies)
+                                                       .FirstOrDefaultAsync();
+                var user = await _userManager.GetUserAsync(User);
 
-            Reply.DatePosted = currentTime;
+                Reply.DatePosted = currentTime;
 
-            Reply.Author = user;
+                Reply.Author = user;
 
-            Thread.CreatedBy = user;
-            Thread.CreatedOn = currentTime;
+                Thread.CreatedBy = user;
+                Thread.CreatedOn = currentTime;
 
-                subforum.Threads.Add(Thread);
-                _context.SaveChanges();
                 Thread.Replies = new()
                 {
                     Reply
                 };
-            _context.SaveChanges();
+                subforum.Threads.Add(Thread);
+                _context.SaveChanges();
 
-            int newThreadID = Thread.ID;
-            return RedirectToPage("Thread", new { id = newThreadID });
+                int newThreadID = Thread.ID;
+                return RedirectToPage("Thread", new { id = newThreadID });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString() + "\n\n" + e.InnerException);
                 return null;

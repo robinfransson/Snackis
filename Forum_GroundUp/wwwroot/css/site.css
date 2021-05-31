@@ -26,9 +26,11 @@ for details on configuring this project to bundle and minify static web assets. 
 .dropdown-menu > .dropdown-item {
     cursor:pointer;
 }
+.pointer {
+    cursor: pointer;
+}
 
 .message-container {
-   
 }
 .reply-container{
     max-width:50ch!important;

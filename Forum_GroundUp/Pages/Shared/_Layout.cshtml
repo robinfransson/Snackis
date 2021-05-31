@@ -49,7 +49,7 @@
             {
                     <partial name="_Messages" />
                 }
-                <div class="btn-group ">
+                <div class="btn-group " id="dropdownmenu">
                     <span class="material-icons navbar-icon my-auto text-white dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="cursor: pointer">
                         account_circle
                     </span>
@@ -57,7 +57,7 @@
                     {
 
 
-                        <div class="dropdown-menu dropdown-menu-end">
+                        <div class="dropdown-menu dropdown-menu-end" id="">
                             <form class="px-4 py-3 login-form">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group">

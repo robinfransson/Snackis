@@ -68,7 +68,11 @@ $(document).ready(function () {
 
 
 
-
+    $('.go-to-thread').click(function (e) {
+        let postID = $(this).data("post-id");
+        let threadID = $(this).data("thread-id");
+        console.log(postID + "," + threadID);
+    })
 
     $('.messages').hover(function () {
     console.log("hovered over messages");
