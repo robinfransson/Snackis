@@ -7,6 +7,8 @@
 
 <div class="container-fluid rounded bg-secondary">
     <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="height:30rem">
+        @if(profile.IsLoggedIn)
+            {
 
         <div class="row">
             <h1 class="pt-3 ps-5">@profile.Username</h1>
@@ -17,14 +19,22 @@
         }
         else
         {
-    <div class="border border-2 border-white">
-        <img src="@profile.ProfilePicture" class="profile-picture-large" />
+    <div class="d-flex justify-content-center">
+        <img src="@profile.ProfilePicture" class="profile-picture-large border border-2 border-white" />
     </div>
         }
-    <form method="post" enctype="multipart/form-data" class="w-75">
-        <label for="formFileLg" class="form-label">Välj profilbild</label>
-        <input class="form-control form-control-lg" id="formFileLg" type="file" asp-for="ProfilePicture" accept="image/x-png,image/gif,image/jpeg" required/>
-        <button type="submit" class="btn-lg btn btn-outline-secondary mt-3">Byt profilbild</button>
-    </form>
+    <div class="d-flex justify-content-center">
+        <form method="post" enctype="multipart/form-data" class="w-75">
+            <label for="formFileLg" class="form-label">Välj profilbild</label>
+            <input class="form-control form-control-lg" id="formFileLg" type="file" asp-for="ProfilePicture" accept="image/x-png,image/gif,image/jpeg" required />
+            <button type="submit" class="btn-lg btn btn-outline-secondary mt-3">Byt profilbild</button>
+        </form>
+    </div>
+
+        }
+        else
+            {
+                <h1 class="text-center pt-5">Inte inloggad!</h1>
+            }
     </div>
 </div>

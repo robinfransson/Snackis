@@ -44,11 +44,17 @@ namespace SnackisForum.Pages
                                             .ThenInclude(replies => replies.Author)
                                             .Include(thread => thread.Parent)
                                      .FirstOrDefault();
+            if(Thread is null)
+            {
+                return RedirectToPage("/");
+            }
 
             CreatedOn = Thread.Replies.OrderBy(reply => reply.DatePosted).First().DatePosted;
             Thread.Replies = Thread.Replies
                                    .OrderBy(reply => reply.DatePosted)
                                    .ToList();
+            Thread.Views++;
+            _context.SaveChanges();
             IsLoggedIn = _signInManager.IsSignedIn(User);
             return Page();
         }
