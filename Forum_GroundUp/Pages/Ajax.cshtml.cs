@@ -19,15 +19,18 @@ namespace SnackisForum.Pages
         private readonly SignInManager<SnackisUser> _signInManager;
         private readonly SnackisContext _context;
         private readonly ILogger<AjaxModel> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
 
 
-        public AjaxModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager, SnackisContext context, ILogger<AjaxModel> logger)
+        public AjaxModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager, 
+                        SnackisContext context, ILogger<AjaxModel> logger, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _context = context;
             _signInManager = signInManager;
             _logger = logger;
+            _roleManager = roleManager;
         }
         public async Task<JsonResult> OnPostMakeAdminAsync()
         {
@@ -47,10 +50,10 @@ namespace SnackisForum.Pages
             return new JsonResult(new { loggedout = true });
         }
 
-        public async Task<JsonResult> OnPostRegisterAsync([FromServices] RoleManager<IdentityRole> roleManager,string email, string username, string password)
+        public async Task<JsonResult> OnPostRegisterAsync(string email, string username, string password)
         {
 
-            bool rolesExist = await roleManager.RoleExistsAsync("Admin");
+            bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
             if(!rolesExist)
             {
                 CreateRoles();
@@ -77,7 +80,6 @@ namespace SnackisForum.Pages
                     try
                     {
                         var result = await _userManager.CreateAsync(user, password);
-
                         if (result.Succeeded)
                         {
                             await _signInManager.SignInAsync(user, isPersistent: false);
@@ -104,8 +106,8 @@ namespace SnackisForum.Pages
                 if (result.Succeeded)
                 {
                     var currentUser = await _context.Users.FirstOrDefaultAsync(user => user.UserName == username);
-                    _logger.LogInformation("{0} ({1}) logged in.", currentUser.UserName, currentUser.ForumUserID);
-                    return new JsonResult(new { success = true, lockout = false, userID = currentUser.ForumUserID });
+                    _logger.LogInformation("{0} logged in.", currentUser.UserName);
+                    return new JsonResult(new { success = true, lockout = false});
                 }
                 if (result.IsLockedOut)
                 {
@@ -122,6 +124,47 @@ namespace SnackisForum.Pages
             // If we got this far, something failed, redisplay form
             return new JsonResult(new { success = false, lockout = false });
         }
+
+
+
+
+
+
+
+
+        private async void CreateRoles()
+        {
+            IdentityRole[] roles = { new IdentityRole
+            {
+                Name = "Admin"
+            }, new IdentityRole
+            {
+                Name = "User"
+            } 
+            };
+            foreach(var role in roles)
+            { 
+            await _roleManager.CreateAsync(role);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         //public async Task<JsonResult> OnGetRepliesAsync(int id)

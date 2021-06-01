@@ -22,6 +22,9 @@ namespace SnackisForum.Injects
         public string Username => _userManager.GetUserAsync(httpContext.User).Result.UserName;
 
         public string UserID => _userManager.GetUserId(httpContext.User);
+
+        public bool IsAdmin => _userManager.IsInRoleAsync(_userManager.GetUserAsync(httpContext.User).Result, "Admin").Result;
+
         public int Notifications { get; set; }
         //public int Notifications { get; set; }
         public bool IsLoggedIn => _signInManager.IsSignedIn(httpContext.User);

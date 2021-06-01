@@ -8,10 +8,8 @@ namespace SnackisDB.Models.Identity
 {
     public class SnackisUser :  IdentityUser
     {
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ForumUserID { get; set; }
-
         public DateTime CreatedOn { get; set; }
+
+        public string ProfileImagePath { get; set; }
     }
 }

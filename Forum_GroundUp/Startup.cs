@@ -70,6 +70,8 @@ namespace SnackisForum
                 options.Password.RequiredLength = 5;
             })
                 .AddEntityFrameworkStores<SnackisContext>()
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders();
 
         }

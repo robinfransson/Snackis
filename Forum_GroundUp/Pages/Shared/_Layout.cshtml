@@ -59,12 +59,22 @@
                     }
                     else
                     {
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <div class="dropdown-item">@currentUser.UserName</div>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-item" id="makeadmin">Gör mig till admin!</div>
-                            <div class="dropdown-item clickable" id="" onclick="logout()">Logga ut</div>
-                        </div>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a href="/Profile" style="text-decoration:none;"><div class="dropdown-item">@currentUser.UserName</div></a>
+                    <div class="dropdown-divider"></div>
+                    @if (profile.IsAdmin)
+                    {
+
+                        <div class="dropdown-item" id="makeadmin">Du är admin!</div>
+                    }
+                    else
+                {
+
+                    <div class="dropdown-item" id="makeadmin">Gör mig till admin!</div>
+
+                    }
+                    <div class="dropdown-item clickable" id="" onclick="logout()">Logga ut</div>
+                </div>
                     }
                 </div>
             </div>
