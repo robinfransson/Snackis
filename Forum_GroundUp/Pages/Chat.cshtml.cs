@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisDB;
 
-namespace Chat_test.Pages
+namespace SnackisForum.Pages
 {
     public class ChatModel : PageModel
     {

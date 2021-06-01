@@ -11,12 +11,6 @@ namespace SnackisDB.Models
         public SnackisContext(DbContextOptions<SnackisContext> options) : base(options)
         {
         }
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<ForumReply>()
-        //        .HasOne(r => r.Thread)
-        //        .WithMany(t => t.Replies);
-        //}
 
         public DbSet<Message> Messages { get; set; }
         public DbSet<Forum> Forums { get; set; }

@@ -1,0 +1,55 @@
+﻿@model object
+@using SnackisDB.Models;
+@{
+    bool isSubforum = Model is Subforum;
+    bool isThread = Model is ForumThread;
+}
+
+
+@if (isSubforum)
+{
+    <div class="w-75 d-flex justify-content-start pt-2 ps-4 align-content-center">
+        @{
+            var subforum = Model as Subforum;
+        }
+        <a href="/" style="text-decoration: none;">
+            <span class="material-icons-outlined me-3">
+                home
+            </span>
+        </a>
+        <span class="material-icons-outlined me-3">
+            arrow_right_alt
+        </span>
+        <a href="/Subforum/@subforum.ID">
+            @subforum.Name
+        </a>
+    </div>
+}
+else if (isThread)
+{
+
+    <div class="w-75 d-flex justify-content-start pt-2 ps-4 align-content-center">
+        @{
+            var thread = Model as ForumThread;
+
+            var subforum = thread.Parent;
+        }
+        <a href="/">
+            <span class="material-icons-outlined me-3">
+                home
+            </span>
+        </a>
+        <span class="material-icons-outlined me-3">
+            arrow_right_alt
+        </span>
+        <a href="/Subforum/@subforum.ID">
+            @subforum.Name
+        </a>
+        <span class="ms-3 material-icons-outlined me-3">
+            arrow_right_alt
+        </span>
+        <a href="/Thread/@thread.ID">
+            @thread.Title
+        </a>
+    </div>
+}

@@ -38,8 +38,10 @@ namespace SnackisForum.Pages
                                                                                        .ThenInclude(thread => thread.Author)
                                                                                 .Include(sub => sub.Threads)
                                                                                         .ThenInclude(thread => thread.CreatedBy)
-                                                                                .OrderByDescending(thread => thread.LastReply)
                                                                                 .FirstOrDefault();
         }
+
+
+
     }
 }

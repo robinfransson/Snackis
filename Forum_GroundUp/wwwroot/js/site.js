@@ -66,13 +66,45 @@ $(document).ready(function () {
         //});
     }
 
+    $("#makeadmin").on('click', function (e) {
+        e.preventDefault();
+        $.post({
+            url: "/Ajax?Handler=MakeAdmin",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+            },
+            success: function (result) {
+                if (result.success == true) {
+                    alert('you are now admin!');
+                }
+                else {
+                    alert('something went wrong!')
+                }
+            }
 
+        })
+
+    })
 
     $('.go-to-thread').click(function (e) {
         let postID = $(this).data("post-id");
         let threadID = $(this).data("thread-id");
         console.log(postID + "," + threadID);
-    })
+        //$.post({
+        //    url: "/Thread?handler=GoToLastReply",
+        //    beforeSend: function (xhr) {
+        //        xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+        //    },
+        //    data: {
+        //        threadID: threadID,
+        //        postID:postID
+        //    },
+        //    success: function (result) {
+        //        console.log(result);
+        window.location.replace("/Thread/" + threadID + "#reply-" + postID);
+        //    }
+        //});
+    });
 
     $('.messages').hover(function () {
     console.log("hovered over messages");

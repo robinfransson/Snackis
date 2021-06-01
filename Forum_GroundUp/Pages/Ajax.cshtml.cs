@@ -29,15 +29,32 @@ namespace SnackisForum.Pages
             _signInManager = signInManager;
             _logger = logger;
         }
+        public async Task<JsonResult> OnPostMakeAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var result = await _userManager.AddToRoleAsync(user, "Admin");
+            if (result.Succeeded)
+            {
+                return new JsonResult(new { success = true });
+            }
+            else
+                return new JsonResult(new { success = false });
 
+        }
         public async Task<JsonResult> OnPostLogoutAsync()
         {
             await _signInManager.SignOutAsync();
             return new JsonResult(new { loggedout = true });
         }
 
-        public async Task<JsonResult> OnPostRegisterAsync(string email, string username, string password)
+        public async Task<JsonResult> OnPostRegisterAsync([FromServices] RoleManager<IdentityRole> roleManager,string email, string username, string password)
         {
+
+            bool rolesExist = await roleManager.RoleExistsAsync("Admin");
+            if(!rolesExist)
+            {
+                CreateRoles();
+            }
             //int age = (int)Math.Floor((DateTime.Now - birthDate).TotalDays / 365.25D);
             if (ModelState.IsValid)
             {
@@ -147,18 +164,18 @@ namespace SnackisForum.Pages
         //    var returnValue = o[0];
         //    return new JsonResult(returnValue);
         //}
-        public async Task<JsonResult> OnGetLoadCommentAsync(int id)
-        {
-            var comment = await _context.Replies.Where(reply => reply.ID == id)
-                .Include(reply => reply.Author).FirstOrDefaultAsync();
-            var returnValue = new { comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo()};
-            return new JsonResult(returnValue);
-        }
+        //public async Task<JsonResult> OnGetLoadCommentAsync(int id)
+        //{
+        //    var comment = await _context.Replies.Where(reply => reply.ID == id)
+        //        .Include(reply => reply.Author).FirstOrDefaultAsync();
+        //    var returnValue = new { comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo()};
+        //    return new JsonResult(returnValue);
+        //}
 
-        private string LinkSection(int id)
-        {
-            return "";
-        }
+        //private string LinkSection(int id)
+        //{
+        //    return "";
+        //}
 
     }
 }

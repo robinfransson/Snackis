@@ -13,31 +13,47 @@ using System.Linq;
 using System.Threading.Tasks;
 using Westwind.AspNetCore.LiveReload;
 using Microsoft.EntityFrameworkCore;
-namespace Chat_test
+namespace SnackisForum
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IWebHostEnvironment CurrentEnvironment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages().AddRazorRuntimeCompilation();
-            services.AddLiveReload();
+            if(CurrentEnvironment.IsDevelopment())
+            {
+
+                services.AddRazorPages().AddRazorRuntimeCompilation();
+                services.AddLiveReload();
+                services.AddDbContext<SnackisContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("local"));
+                });
+            }
+            else
+            {
+
+                services.AddRazorPages();
+                services.AddDbContext<SnackisContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("azure"));
+                });
+            }
             services.AddHttpContextAccessor();
 
             services.AddScoped<SnackisForum.Injects.UserProfile>();
 
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
-            services.AddDbContext<SnackisContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("database"));
-            });
+
 
 
 

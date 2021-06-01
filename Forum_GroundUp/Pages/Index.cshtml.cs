@@ -12,10 +12,13 @@ using SnackisForum.Injects;
 
 namespace Chatt_test.Pages
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class IndexModel : PageModel
     {
         public bool LoggedIn { get; set; }
         public List<Forum> Forums { get; set; }
+
+
 
         private readonly SignInManager<SnackisUser> _signInManager;
         public readonly UserProfile _profile;
@@ -24,17 +27,23 @@ namespace Chatt_test.Pages
         {
             _signInManager = signInManager;
             _profile = profile;
+
         }
+
         public void OnGet([FromServices] SnackisContext context)
         {
             Forums = context.Forums.Include(forum => forum.Subforums)
-                                        .ThenInclude(sub => sub.LastReply)
-                                            .ThenInclude(reply => reply.Author)
-                                   .Include(forum => forum.Subforums)
                                         .ThenInclude(sub => sub.Threads)
                                             .ThenInclude(thread => thread.Replies)
+                                            .ThenInclude(reply => reply.Author)
                                    .ToList();
+            if(!Forums.Any())
+            {
+                SnackisForum.InitialSetup.Setup(context);
+            }
             LoggedIn = _signInManager.IsSignedIn(User);
+
+
         }
 
 

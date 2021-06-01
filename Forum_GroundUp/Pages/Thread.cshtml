@@ -1,11 +1,11 @@
-﻿@page "{id:int?}/{pageNumber:int?}"
+﻿@page "{id:int?}"
 @model SnackisForum.Pages.ThreadModel
 @inject SnackisContext context;
 @inject SnackisForum.Injects.UserProfile userProfile;
 @using SnackisDB.Models;
 @{
 
-    int postNumber = Model.PageNumber == 0 ? 1 : (Model.PageNumber * 10)+ 1;
+    int postNumber = 1;
     ViewData["Title"] = Model.Thread.Title;
     if (ViewData["Ajax"] != null)
     {
@@ -13,6 +13,8 @@
     }
 }
 <div class="container mt-3 pb-2 rounded bg-dark h-100 text-white mb-5">
+
+    <partial name="_CurrentLocation" model="Model.Thread" />
     <div class="text-center row border-bottom border-secondary">
         <div class="thread-title">
             <div class="h3 pt-1 flex-column">@Model.Thread.Title</div>
@@ -20,7 +22,7 @@
 
         </div>
 
-    </div> 
+    </div>
     @foreach (var reply in Model.Thread.Replies)
     {
         var user = reply.Author;
@@ -28,7 +30,7 @@
         bool hasParentComment = parentComment != null;
         string datePosted = "";
         datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
-        <div class="row border-bottom border-secondary ">
+        <div class="row border-bottom border-secondary " id="reply-@reply.ID">
             <div class="col-1 pt-2">
 
                 @user.UserName
@@ -56,9 +58,9 @@
                     {
                         <div class="border rounded ms-3 my-2 me-0 border-secondary w-75 text-break text-wrap reply-container">
                             @*@if (!string.IsNullOrWhiteSpace(parentComment.ReplyTitle))
-                            {
-                                <b>@parentComment</b>
-                            }*@
+                                {
+                                    <b>@parentComment</b>
+                                }*@
                             <div class="mb-1">@parentComment</div>
                             <div>av @reply.ReplyTo.UserName @reply.RepliedComment.DatePosted.ToString("yyyy/MM/dd HH:MM")</div>
                         </div>
@@ -66,12 +68,12 @@
                     <div class="message-container text-break my-3" style="max-width:60rem;">
                         @reply.Body
                     </div>
-                    @if(Model.IsLoggedIn)
+                    @if (Model.IsLoggedIn)
 
                     {
-                    <div class="border-top border-secondary ps-3">
-                        <a href="">Svara</a>
-                    </div>
+                        <div class="border-top border-secondary ps-3">
+                            <a href="">Svara</a>
+                        </div>
                     }
                 </div>
 
@@ -79,25 +81,25 @@
         </div>
         postNumber++;
     }
-    @if(Model.IsLoggedIn)
-    { 
-    <div class="new-post">
-        <form method="post" class="">
-            @Html.AntiForgeryToken()
-            <div class="d-flex justify-content-center">
-                <div class="mb-3 w-75 justify-content-center">
-                    <label for="exampleFormControlTextarea1" class="form-label ">Nytt inlägg</label>
-                    <textarea class="form-control bg-secondary border-secondary text-white"
-                              id="exampleFormControlTextarea1" rows="3" asp-for="Reply.Body">
+    @if (Model.IsLoggedIn)
+    {
+        <div class="new-post">
+            <form method="post" class="">
+                @Html.AntiForgeryToken()
+                <div class="d-flex justify-content-center">
+                    <div class="mb-3 w-75 justify-content-center">
+                        <label for="exampleFormControlTextarea1" class="form-label ">Nytt inlägg</label>
+                        <textarea class="form-control bg-secondary border-secondary text-white"
+                                  id="exampleFormControlTextarea1" rows="3" asp-for="Reply.Body">
                     </textarea>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" asp-for="Reply.ReplyTo"/>
-            <div class="fw-bold text-center">Svarar som @userProfile.Username</div>
+                <input type="hidden" asp-for="Reply.ReplyTo" />
+                <div class="fw-bold text-center">Svarar som @userProfile.Username</div>
 
-            <button type="submit" class="btn btn-outline-secondary btn-secondary text-white">Skicka</button>
-        </form>
-    </div>
+                <button type="submit" class="btn btn-outline-secondary btn-secondary text-white">Skicka</button>
+            </form>
+        </div>
     }
 </div>
 @*<div class="jstree ps-5"></div>*@
