@@ -49,7 +49,7 @@ namespace SnackisForum.Pages
                 return RedirectToPage("/");
             }
 
-            CreatedOn = Thread.Replies.OrderBy(reply => reply.DatePosted).First().DatePosted;
+
             Thread.Replies = Thread.Replies
                                    .OrderBy(reply => reply.DatePosted)
                                    .ToList();
