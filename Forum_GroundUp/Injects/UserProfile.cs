@@ -22,6 +22,7 @@ namespace SnackisForum.Injects
         public string Username => _userManager.GetUserAsync(httpContext.User).Result.UserName;
 
         public string UserID => _userManager.GetUserId(httpContext.User);
+        public string ProfilePicture => _userManager.GetUserAsync(httpContext.User).Result.ProfileImagePath;
 
         public bool IsAdmin => _userManager.IsInRoleAsync(_userManager.GetUserAsync(httpContext.User).Result, "Admin").Result;
 

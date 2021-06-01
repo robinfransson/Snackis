@@ -33,7 +33,15 @@
         <div class="row border-bottom border-secondary " id="reply-@reply.ID">
             <div class="col-1 pt-2">
 
-                @user.UserName
+                @if (string.IsNullOrWhiteSpace(user.ProfileImagePath))
+                {
+                    <img src="https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" class="profile-picture" />
+                }
+                else
+                {
+                    <img src="@user.ProfileImagePath" class="profile-picture" />
+                }
+                    @user.UserName
                 <div style="font-size:75%">Gick med</div>
                 <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
 

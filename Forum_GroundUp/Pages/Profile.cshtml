@@ -6,20 +6,25 @@
 }
 
 <div class="container-fluid rounded bg-secondary">
-    <div class="container w-75 bg-dark text-light rounded mt-3 pb-1">
+    <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="height:30rem">
+
         <div class="row">
             <h1 class="pt-3 ps-5">@profile.Username</h1>
         </div>
-        <form enctype="multipart/form-data" method="post">
-            <dl>
-                <dt>
-                    <label for="ProfilePicture">Välj en bild</label>
-                </dt>
-                <dd>
-                    <input asp-for="ProfilePicture" type="image" required>
-                </dd>
-            </dl>
-            <input asp-page-handler="Upload" class="btn" type="submit" value="Ladda upp" />
-        </form>
+        @if (string.IsNullOrWhiteSpace(profile.ProfilePicture))
+        {
+            <img src="https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" class="profile-picture" />
+        }
+        else
+        {
+    <div class="border border-2 border-white">
+        <img src="@profile.ProfilePicture" class="profile-picture-large" />
+    </div>
+        }
+    <form method="post" enctype="multipart/form-data" class="w-75">
+        <label for="formFileLg" class="form-label">Välj profilbild</label>
+        <input class="form-control form-control-lg" id="formFileLg" type="file" asp-for="ProfilePicture" accept="image/x-png,image/gif,image/jpeg" required/>
+        <button type="submit" class="btn-lg btn btn-outline-secondary mt-3">Byt profilbild</button>
+    </form>
     </div>
 </div>
