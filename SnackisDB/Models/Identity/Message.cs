@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnackisDB.Models.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,17 +15,12 @@ namespace SnackisDB.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        [ForeignKey("AspNetUsers")]
-        public string RecieverID { get; set; }
-        public string SenderID { get; set; }
+        public SnackisUser Sender { get; set; }
+        public SnackisUser Reciever { get; set; }
+        public string MessageTitle { get; set; }
         public string MessageBody { get; set; }
         [DefaultValue(false)]
         public bool HasBeenViewed { get; set; }
-
-        [DefaultValue(false)]
-        public bool MessageReciever { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime Date { get; set; }
+        public DateTime DateSent { get; set; }
     }
 }

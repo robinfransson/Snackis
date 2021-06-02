@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SnackisDB.Models.Identity;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace SnackisForum.Injects
         private HttpContext httpContext;
         public int UnreadMessages { 
             get {
-                return _context.Messages.Count(message => message.RecieverID == _userManager.GetUserId(httpContext.User) && !message.HasBeenViewed);
+                return _context.Messages.Include(message => message.Reciever).Count(message => message.Reciever == _userManager.GetUserAsync(httpContext.User).Result && !message.HasBeenViewed);
                 }
         }
         public string Username => _userManager.GetUserAsync(httpContext.User).Result.UserName;
