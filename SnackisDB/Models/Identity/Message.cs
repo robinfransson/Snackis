@@ -15,8 +15,8 @@ namespace SnackisDB.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        public SnackisUser Sender { get; set; }
-        public SnackisUser Reciever { get; set; }
+        public string Sender { get; set; }
+        public string Reciever { get; set; }
         public string MessageTitle { get; set; }
         public string MessageBody { get; set; }
         [DefaultValue(false)]
