@@ -9,54 +9,75 @@ var token = $('input[name="__RequestVerificationToken"]').val();
 
 let path = window.location.pathname.toLowerCase();
 
-function getThreadReplies() {
-
-    let threadID = path.split('/').reverse()[0];
-    $.ajax({
-        type: 'GET',
-        url: '/ajax?handler=replies',
-        data: { "id": threadID },
-        dataType: "json",
-        success: function (result) {
-            console.log(result);
-            createTree(result);
-        }
-    });
-}
 
 
-function loadComment(id) {
-    $.get('/ajax?handler=LoadComment', { id : id }, function (result) {
-        console.log(result);
-    })
-}
 
 
-function createTree(data) {
 
-    $('.jstree')
-        .on('click', '.jstree-anchor', function (e) {
-            $('.jstree').jstree(true).toggle_node(e.target);
+
+
+
+async function chatLoad() {
+    if (timesRan < 100) {
+        timesRan++;
+        $.get(url, function (data) {
+            console.log(scrollAuto());
+            $(".messages").append(getMessage(data));
+            console.log(autoScroll);
+            if (autoScroll) {
+                setTimeout(1000);
+                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
+            }
+
+
         })
-        .on("select_node.jstree", function (e, data) {
-            e.preventDefault();
-            e.stopPropagation();
-            loadComment(data.node.id);
-        }).jstree({
-            'themes': {
-               "icons":false
-            },
-            'plugins' : [ "material" ],
-            'core': {
-            
-                'data': data,
-                dblclick_toggle: false,
-                expand_selected_onload: false       
-        }
-    });
+    }
 }
 
+
+function getMessage(data) {
+    console.log(data);
+    if (data.reciever == false) {
+        return '<div class="justify-content-start row">' +
+            '<div class="box sb2 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
+            '</div >';
+    }
+    else {
+
+        return '<div class="justify-content-end row">' +
+            '<div class="box sb1 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
+            '</div>';
+    }
+}
+
+
+function scrollAuto() {
+    var element = $('.messages-container');
+    if (element.scrollTop == (element.scrollHeight - element.offsetHeight)) {
+        return true;
+    }
+    return false;
+}
+let currentChat = null;
 $(document).ready(function () {
+
+
+
+    $('.open-messages').click(function (e) {
+        currentChat = $(this).data("chat-id");
+        $.get("/messages?handler=LoadMessages&id=" + currentChat, function (result) {
+            $('.chat-container').html(result);
+
+            $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 0);
+        })
+    })
+
+
+
+
+
+
+
 
 
     if (path.split("/").includes("thread")) {
@@ -181,24 +202,24 @@ $('#logout').on('click', function (e) {
 $(".add-message").click(function () {
     chatLoad();
 })
-$('.message-container').scroll(function () {
-    if ($(this).scrollTop() +
-        $(this).innerHeight() >=
-        $(this)[0].scrollHeight - 1) {
-        console.log("end reached");
-        autoScroll = true;
-    }
-    else {
-        let value = $(this).scrollTop() + $(this).innerHeight();
-        console.log("scrollTop = " + $(this).scrollTop() + "\ninner height = " +
-            $(this).innerHeight() + "\n scroll height = " +
-            $(this)[0].scrollHeight)
-        console.log("value to match : " + value)
-        console.log($(this)[0].scrollHeight);
-        console.log("end not reached");
-        autoScroll = false;
-    }
-});
+//$('.message-container').scroll(function () {
+//    if ($(this).scrollTop() +
+//        $(this).innerHeight() >=
+//        $(this)[0].scrollHeight - 1) {
+//        console.log("end reached");
+//        autoScroll = true;
+//    }
+//    else {
+//        let value = $(this).scrollTop() + $(this).innerHeight();
+//        console.log("scrollTop = " + $(this).scrollTop() + "\ninner height = " +
+//            $(this).innerHeight() + "\n scroll height = " +
+//            $(this)[0].scrollHeight)
+//        console.log("value to match : " + value)
+//        console.log($(this)[0].scrollHeight);
+//        console.log("end not reached");
+//        autoScroll = false;
+//    }
+//});
 });
 
 
@@ -215,7 +236,7 @@ function logout() {
         },
         success: function (result) {
             if (result.hasOwnProperty('loggedout')) {
-                window.location.reload();
+                window.location.replace("/");
                 console.log("yay");
             }
             else {
@@ -238,45 +259,8 @@ function logout() {
             //}
         });
 }
-function getMessage(data) {
-    console.log(data);
-    if (data.reciever == false) {
-        return '<div class="justify-content-start row">' +
-            '<div class="box sb2 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
-            '</div >';
-    }
-    else {
-
-        return '<div class="justify-content-end row">' +
-            '<div class="box sb1 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
-            '</div>';
-    }
-}
 
 
-function scrollAuto() {
-    var element = $('.messages-container');
-    if (element.scrollTop == (element.scrollHeight - element.offsetHeight)) {
-        return true;
-    }
-    return false;
-}
-async function chatLoad() {
-    if (timesRan < 100) {
-        timesRan++;
-        $.get(url, function (data) {
-            console.log(scrollAuto());
-            $(".messages").append(getMessage(data));
-            console.log(autoScroll);
-            if (autoScroll) {
-                setTimeout(2000);
-                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
-            }
-
-
-        })
-    }
-}
 
 
 

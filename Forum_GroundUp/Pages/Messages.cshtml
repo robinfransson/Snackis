@@ -1,20 +1,69 @@
 ﻿@page
 @model SnackisForum.Pages.MessagesModel
+@using SnackisForum.Injects;
 @{
 }
-
-<div class="container-fluid rounded bg-secondary">
-    <div class="container w-75 bg-dark text-light rounded mt-3 pb-1">
+@inject UserProfile userProfile;
+<div class="container-fluid rounded bg-secondary " >
+    <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="max-height:50rem; height:50rem">
         <div class="row">
-            <div class="col-2">
-                <table class="table-dark table-active table-hover table-striped">
-                    <thead><tr>
-                        <td>
-                        Inkorg
+            <div class="col-2 pt-5">
+                <table class="table table-dark table-hover table-striped table-bordered">
+                    <thead class="">
+                        <tr>
+                            <td>
+                                Inkorg
                             </td>
                         </tr>
                     </thead>
+                    <tbody class="clickable">
+                        @if (Model.Messages.Any())
+                        {
+
+                            @foreach (var group in Model.Messages)
+                            {
+                                var lastMessage = group.OrderBy(group => group.DateSent).First();
+                                string chattingWith = lastMessage.Sender == userProfile.Username ? lastMessage.Reciever : lastMessage.Sender;
+                                int newMessages = group.Count(message => !message.HasBeenViewed && message.Reciever == userProfile.Username);
+                                
+                                <tr>
+                                    <td class="open-messages" data-chat-id="@group.Key">
+                                        <div>@chattingWith</div>
+                                        @if (newMessages > 0)
+                                        {
+                                            string message = newMessages == 1 ? "nytt meddelande" : "nya meddelanden";
+                                            <div>@newMessages @message</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Inga nya meddelanden</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>
+                                    Inga nya meddelanden
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
                 </table>
+            </div>
+            <div class="col mt-5 " id="chatArea" style="">
+                <div class="row border mb-3 pb-3 me-3">
+                    <div class="container py-1 message-container d-block" style="height:40rem;">
+                        <div class="chat-container d-block h-100 d-flex align-content-end ">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    Hej
+                </div>
             </div>
         </div>
     </div>

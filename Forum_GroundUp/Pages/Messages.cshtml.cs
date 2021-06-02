@@ -18,15 +18,32 @@ namespace SnackisForum.Pages
             _profile = userProfile;
         }
 
-        public List<IGrouping<object, Message>> Messages { get; set; }
+        public List<IGrouping<int, Message>> Messages { get; set; }
 
         public void OnGet()
         {
             Messages = _context.Messages.Where(message => message.Reciever == _profile.Username || message.Sender == _profile.Username)
-                                              .GroupBy(message => new { message.Reciever, message.Sender})
+                                              .AsEnumerable()
+                                              .GroupBy(message => message.ChatID)
                                               .ToList();
             
 
+        }
+
+
+
+
+        public PartialViewResult OnGetLoadMessages(int id)
+        {
+            List<Message> chatModel = _context.Messages.Where(message => message.Reciever == _profile.Username || message.Sender == _profile.Username && message.ChatID == id)
+                                              .ToList();
+            if(!chatModel.Any())
+            {
+                return null;
+            }
+            chatModel.Where(message => !message.HasBeenViewed).ToList().ForEach(message => message.HasBeenViewed = true);
+            _context.SaveChanges();
+            return Partial("_Chat", chatModel);
         }
     }
 }

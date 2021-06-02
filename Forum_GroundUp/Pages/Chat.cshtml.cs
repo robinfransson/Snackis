@@ -27,22 +27,5 @@ namespace SnackisForum.Pages
         }
 
 
-        public async Task<JsonResult> OnGetLoadMessages([FromServices] HttpClient client)
-        {
-            //var message = _context.Messages.Where(message => message.HasBeenViewed == false).FirstOrDefault();
-            //if(message == null)
-            //{
-            //    return null;
-            //}
-            //message.HasBeenViewed = true;
-            //int rowsChanged = await _context.SaveChangesAsync();
-            //_logger.LogDebug("Rows changed = {0}", rowsChanged);
-            List<string> words = await client.GetFromJsonAsync<List<string>>("https://random-word-api.herokuapp.com/word?number=" + rand.Next(6, 20));
-            string sentance = string.Join(" ", words);
-            bool reciever = rand.Next(1, 101) < 50;
-            var returnValue = new { reciever = reciever, message = sentance };
-            return new JsonResult(returnValue);
-
-        }
     }
 }
