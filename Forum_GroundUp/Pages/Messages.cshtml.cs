@@ -18,12 +18,15 @@ namespace SnackisForum.Pages
             _profile = userProfile;
         }
 
-        public List<Message> Messages { get; set; }
-
+        public List<IGrouping<object, Message>> Messages { get; set; }
 
         public void OnGet()
         {
-            Messages = _context.Messages.Where(message => message.Reciever == _profile.Username).ToList();
+            Messages = _context.Messages.Where(message => message.Reciever == _profile.Username || message.Sender == _profile.Username)
+                                              .GroupBy(message => new { message.Reciever, message.Sender})
+                                              .ToList();
+            
+
         }
     }
 }
