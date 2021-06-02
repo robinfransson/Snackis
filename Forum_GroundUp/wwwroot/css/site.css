@@ -24,10 +24,10 @@ for details on configuring this project to bundle and minify static web assets. 
 */
 
 .profile-picture{
-    max-height:3rem;
-    max-width:3rem;
-    height:3rem;
-    width:3rem;
+    max-height:5rem;
+    max-width:5rem;
+    height:5rem;
+    width:5rem;
 }
 .profile-picture-large {
     max-height: 10rem;
@@ -110,6 +110,17 @@ a {
 .clickable {
     cursor:pointer;
 }
+.message-table {
+    display: block;
+    max-height: 40rem;
+    overflow-y: scroll;
+}
+
+    table thead, table tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
 
 .message-container {
     overflow-y: scroll;
@@ -117,9 +128,19 @@ a {
     max-height: 75%;
     min-height: 75%;
 }
-    .message-container::-webkit-scrollbar {
+.message-container::-webkit-scrollbar {
         display: none; /* Safari and Chrome */
     }
+.message-table::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+
+
+
+
+    /*.message-table::-webkit-scrollbar {
+        display: none;*/ /* Safari and Chrome */
+    /*}*/
 /*.messages {
 }
 

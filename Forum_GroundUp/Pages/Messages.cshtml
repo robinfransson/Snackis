@@ -7,27 +7,32 @@
 <div class="container-fluid rounded bg-secondary " >
     <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="max-height:50rem; height:50rem">
         <div class="row">
-            <div class="col-2 pt-5">
+            <div class="col-2 pt-5 "style="max-height:30rem!important">
                 <table class="table table-dark table-hover table-striped table-bordered">
-                    <thead class="">
+                    <thead>
                         <tr>
                             <td>
                                 Inkorg
                             </td>
                         </tr>
                     </thead>
-                    <tbody class="clickable">
+                    <tbody class="clickable message-table ">
                         @if (Model.Messages.Any())
                         {
-
-                            @foreach (var group in Model.Messages)
+                            var newList = Model.Messages.Select(group => new
                             {
-                                var lastMessage = group.OrderBy(group => group.DateSent).First();
+                                group,
+                                lastMessage = group.OrderByDescending(message => message.DateSent).FirstOrDefault()
+                            }).OrderByDescending(obj => obj.lastMessage.DateSent).ToList();
+
+                            @foreach (var obj in newList)
+                            {
+                                var lastMessage = obj.lastMessage;
                                 string chattingWith = lastMessage.Sender == userProfile.Username ? lastMessage.Reciever : lastMessage.Sender;
-                                int newMessages = group.Count(message => !message.HasBeenViewed && message.Reciever == userProfile.Username);
-                                
+                                int newMessages = obj.group.Count(message => !message.HasBeenViewed && message.Reciever == userProfile.Username);
+
                                 <tr>
-                                    <td class="open-messages" data-chat-id="@group.Key">
+                                    <td class="open-messages" data-chat-id="@obj.group.Key">
                                         <div>@chattingWith</div>
                                         @if (newMessages > 0)
                                         {

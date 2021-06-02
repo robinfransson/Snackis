@@ -35,7 +35,7 @@ namespace SnackisForum.Pages
 
         public PartialViewResult OnGetLoadMessages(int id)
         {
-            List<Message> chatModel = _context.Messages.Where(message => message.Reciever == _profile.Username || message.Sender == _profile.Username && message.ChatID == id)
+            List<Message> chatModel = _context.Messages.Where(message => ((message.Reciever == _profile.Username || message.Sender == _profile.Username) && message.ChatID == id))
                                               .ToList();
             if(!chatModel.Any())
             {

@@ -67,7 +67,7 @@ $(document).ready(function () {
         currentChat = $(this).data("chat-id");
         $.get("/messages?handler=LoadMessages&id=" + currentChat, function (result) {
             $('.chat-container').html(result);
-
+            console.log(currentChat);
             $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 0);
         })
     })
