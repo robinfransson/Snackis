@@ -7,3 +7,27 @@
 
     </div>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalTitle"></h5>
+                <button type="button" class="close" onclick="$('#exampleModal').modal('hide')" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" class="profile-picture" id="profilePicture" />
+                <h6 id="exampleModalUser"></h6>
+                <h6 id="exampleModalDatePosted"></h6>
+                <div class="container" id="exampleModalBody">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#exampleModal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-primary">Send message</button>
+            </div>
+        </div>
+    </div>
+</div>

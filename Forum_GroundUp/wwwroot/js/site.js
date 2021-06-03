@@ -120,10 +120,22 @@ function createTree(data) {
         });
 }
 
+function showModal(title, user, message,date,picture) {
+    let modal = $('#exampleModal');
+    $('#exampleModalTitle').text(title);
+    $('#exampleModalBody').text(message)
+    $('#exampleModalUser').text(user);
+    $('#exampleModalDatePosted').text(date)
+    $('#profilePicture').attr("src", picture);
+    modal.modal('show');
+}
+
 function loadReply(id) {
     $.get("/treeview?handler=LoadComment&id="+id, function (result) {
         // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
-        alert(result.comment);
+        showModal(result.title, result.poster, result.comment, result.date, result.picture)
+        console.log(result.title, result.poster, result.comment, result.date, result.picture)
+        
     })
 }
 
@@ -273,7 +285,7 @@ $('#registerForm').on('submit', function (e) {
         }
     });
 })
-
+    
 
 $('#logout').on('click', function (e) {
     e.preventDefault();

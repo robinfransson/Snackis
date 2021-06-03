@@ -120,7 +120,7 @@ namespace SnackisForum.Pages
             {
                 id = (reply.ID + 10000000).ToString(),
                 parent = (thread.ID + 1000000).ToString(),
-                text = reply.Title,
+                text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
 
                 state = new
                 {
@@ -141,12 +141,16 @@ namespace SnackisForum.Pages
 
         public async Task<JsonResult> OnGetLoadCommentAsync(string id)
         {
-            int realID = 0;
-            int.TryParse(id, out realID);
+            _ = int.TryParse(id, out int realID);
             realID -= 10000000;
             var comment = await _context.Replies.Where(reply => reply.ID == realID)
                 .Include(reply => reply.Author).FirstOrDefaultAsync();
-            var returnValue = new { comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() };
+            var returnValue = new { 
+                comment = comment.Body, 
+                poster = comment.Author.UserName, 
+                title = string.IsNullOrWhiteSpace(comment.Title) ? "Ingen rubrik" : comment.Title, 
+                date = comment.DaysAgo(), 
+                picture = string.IsNullOrWhiteSpace(comment.Author.ProfileImagePath) ? "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" : comment.Author.ProfileImagePath };
             return new JsonResult(returnValue);
         }
 
