@@ -45,5 +45,13 @@ namespace SnackisForum.Pages
             _context.SaveChanges();
             return Partial("_Chat", chatModel);
         }
+
+
+        public JsonResult OnGetUserExists(string username)
+        {
+            username = username.ToLower();
+            bool exists = _context.Users.Any(user => user.UserName.ToLower() == username);
+            return new JsonResult(new { exists });
+        }
     }
 }

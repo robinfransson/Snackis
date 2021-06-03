@@ -1,4 +1,5 @@
-﻿
+﻿////require("jquery");
+
 //let url = "/?Handler=LoadMessages";
 let timesRan = 0;
 //let myTimer = setInterval(chatLoad, 5000);
@@ -59,6 +60,73 @@ function scrollAuto() {
     return false;
 }
 let currentChat = null;
+
+
+
+
+
+
+function loadTreeView() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/treeview?handler=loadforum',
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            createTree(result);
+        }
+    });
+}
+function createTree(data) {
+    $('.jstree')
+        .on('click', '.jstree-anchor', function (e) {
+            $('.jstree').jstree(true).toggle_node(e.target);
+        })
+        .on("select_node.jstree", function (e, data) {
+            e.preventDefault();
+            e.stopPropagation();
+            let nodeType = data.node.a_attr.class;
+            let id = data.node.id;
+            console.log(nodeType);
+            switch (nodeType) {
+                case "forum-tree":
+                    console.log("forum clicked");
+                    break;
+                case "sub-tree":
+                    console.log("subforum clicked");
+                    break;
+                case "thread-tree":
+                    console.log("thread clicked");
+                    break;
+                case "reply-tree":
+                    console.log("reply clicked");
+                    loadReply(id);
+                    break;
+                default:
+                    break;
+            }
+        }).jstree({
+            'themes': {
+                "icons": false
+            },
+            'plugins': ["material", "types" ],
+            'core': {
+
+                'data': data,
+                dblclick_toggle: false,
+                expand_selected_onload: false
+            }
+        });
+}
+
+function loadReply(id) {
+    $.get("/treeview?handler=LoadComment&id="+id, function (result) {
+        // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
+        alert(result.comment);
+    })
+}
+
 $(document).ready(function () {
 
 
@@ -74,14 +142,27 @@ $(document).ready(function () {
 
 
 
+    $('#compose-button').click(function () {
+        console.log('clicked')
+        $.get({
+            url: '/messages?handler=compose',
+
+            success: function (result) {
+                $('chat-container').html(result);
+            },
+            fail: function f() {
+                console.log('clicked')
+                console.log('fail');
+            }
+        })
+    })
 
 
 
 
 
-
-    if (path.split("/").includes("thread")) {
-        getThreadReplies();
+    if (path.split("/").includes("treeview")) {
+        loadTreeView();
         //$('.jstree').on("show_node.jstree", function (e, data) {
         //    console.log(data.selected);
         //});
@@ -167,7 +248,7 @@ $('.login-form').on('submit', function (e) {
         }
         else {
 
-            window.location.reload();
+            window.location.href = window.location.pathname + window.location.hash;
         }
     });
 })

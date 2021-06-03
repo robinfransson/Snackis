@@ -23,6 +23,11 @@ for details on configuring this project to bundle and minify static web assets. 
     }
 */
 
+
+footer{
+    height:20rem;
+}
+
 .profile-picture{
     max-height:5rem;
     max-width:5rem;
