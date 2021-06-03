@@ -32,7 +32,7 @@ namespace SnackisDB.Models
             var elasped = now.Subtract(DatePosted);
             double daysAgo = elasped.TotalDays;
 
-            var numbersToAddZeroTo = Enumerable.Range(0, 9);
+            var numbersToAddZeroTo = Enumerable.Range(1, 10);
             if (numbersToAddZeroTo.Contains(DatePosted.Hour))
             {
                 hours = "0" + hours;
@@ -42,11 +42,11 @@ namespace SnackisDB.Models
                 minutes = "0" + minutes;
             }
 
-            if (daysAgo <= 1)
+            if (daysAgo <= 1 && now.ToShortDateString() == this.DatePosted.ToShortDateString())
             {
                 return $"idag {hours}:{minutes}";
             }
-            else if (daysAgo <= 2)
+            else if (daysAgo <= 1)
             {
                 return $"igår {hours}:{minutes}";
             }

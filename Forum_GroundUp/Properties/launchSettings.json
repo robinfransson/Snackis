@@ -15,7 +15,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
         },
-        "Forum_GroundUp": {
+        "SnackisForum": {
             "commandName": "Project",
             "dotnetRunMessages": "true",
             "launchBrowser": true,
