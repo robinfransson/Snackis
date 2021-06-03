@@ -80,9 +80,6 @@ function loadTreeView() {
 }
 function createTree(data) {
     $('.jstree')
-        .on('click', '.jstree-anchor', function (e) {
-            $('.jstree').jstree(true).toggle_node(e.target);
-        })
         .on("select_node.jstree", function (e, data) {
             e.preventDefault();
             e.stopPropagation();
@@ -92,12 +89,14 @@ function createTree(data) {
             switch (nodeType) {
                 case "forum-tree":
                     console.log("forum clicked");
+                    
                     break;
                 case "sub-tree":
                     console.log("subforum clicked");
                     break;
                 case "thread-tree":
                     console.log("thread clicked");
+                    loadThread(id)
                     break;
                 case "reply-tree":
                     console.log("reply clicked");
@@ -113,20 +112,35 @@ function createTree(data) {
             'plugins': ["material", "types" ],
             'core': {
 
-                'data': data,
-                dblclick_toggle: false,
-                expand_selected_onload: false
+                'data': data
             }
         });
 }
 
 function showModal(title, user, message,date,picture) {
     let modal = $('#exampleModal');
+    let profilePicture = $('#profilePicture');
+
+
+
     $('#exampleModalTitle').text(title);
     $('#exampleModalBody').text(message)
     $('#exampleModalUser').text(user);
     $('#exampleModalDatePosted').text(date)
-    $('#profilePicture').attr("src", picture);
+
+    if (picture == "" && !profilePicture.hasClass('d-none')) {
+
+        $('#profilePicture').addClass("d-none");
+    }
+    else if (picture != "" && profilePicture.hasClass('d-none')) {
+        profilePicture.removeClass('d-none');
+        $('#profilePicture').attr("src", picture);
+
+    }
+    else {
+
+        $('#profilePicture').attr("src", picture);
+    }
     modal.modal('show');
 }
 
@@ -139,8 +153,16 @@ function loadReply(id) {
     })
 }
 
-$(document).ready(function () {
+function loadThread(id) {
+    $.get("/treeview?handler=LoadThread&id=" + id, function (result) {
+        // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
+        showModal(result.title, result.poster, result.comment, result.date, result.picture)
+        console.log(result.title, result.poster, result.comment, result.date, result.picture)
 
+    })
+}
+
+$(document).ready(function () {
 
 
     $('.open-messages').click(function (e) {

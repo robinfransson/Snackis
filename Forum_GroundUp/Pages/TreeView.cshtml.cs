@@ -20,6 +20,12 @@ namespace SnackisForum.Pages
         private readonly SnackisContext _context;
         private readonly ILogger<ThreadModel> _logger;
 
+        //lägger till stora tal på varje ID för att "children" i treeview ska hamna under rätt kategori
+        int addToForumID = 200000;
+        int addToSubforumID = 500000;
+        int addToThreadID = 1000000;
+        int addToReplyID = 10000000;
+
 
 
         public TreeViewModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
@@ -34,6 +40,7 @@ namespace SnackisForum.Pages
         {
 
         }
+#region Region 1
         public async Task<JsonResult> OnGetLoadForumAsync()
         {
             ViewData["ajax"] = true;
@@ -62,7 +69,7 @@ namespace SnackisForum.Pages
                                                  .AsSingleQuery().ToListAsync();
             var forums = Forum.Select(forum => new
             {
-                id = (forum.ID + 200000).ToString(),
+                id = (forum.ID + addToForumID).ToString(),
                 parent = "#",
                 text = forum.Name,
                 state = new
@@ -78,8 +85,8 @@ namespace SnackisForum.Pages
 
             var subforums = Forum.Select(forum => forum.Subforums.Select(sub => new
             {
-                id = (sub.ID + 500000).ToString(),
-                parent = (forum.ID + 200000).ToString(),
+                id = (sub.ID + addToSubforumID).ToString(),
+                parent = (forum.ID + addToForumID).ToString(),
                 text = sub.Name,
                 state = new
                 {
@@ -99,8 +106,8 @@ namespace SnackisForum.Pages
                                              sub => sub.Threads.Select(
                                                         thread => new
                                                         {
-                                                            id = (thread.ID + 1000000).ToString(),
-                                                            parent = (sub.ID + 500000).ToString(),
+                                                            id = (thread.ID + addToThreadID).ToString(),
+                                                            parent = (sub.ID + addToSubforumID).ToString(),
                                                             text = thread.Title,
                                                             state = new
                                                             {
@@ -118,8 +125,8 @@ namespace SnackisForum.Pages
                                        );
             var replies = Forum.Select(forum => forum.Subforums.SelectMany(sub => sub.Threads.SelectMany(thread => thread.Replies.Select(reply => new
             {
-                id = (reply.ID + 10000000).ToString(),
-                parent = (thread.ID + 1000000).ToString(),
+                id = (reply.ID + addToReplyID).ToString(),
+                parent = reply.RepliedComment == null ? (thread.ID + addToThreadID).ToString() : (reply.RepliedComment.ID+ addToReplyID).ToString(),
                 text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
 
                 state = new
@@ -136,13 +143,13 @@ namespace SnackisForum.Pages
             forums.AddRange(replies);
             return new JsonResult(forums);
         }
-
+        #endregion 
 
 
         public async Task<JsonResult> OnGetLoadCommentAsync(string id)
         {
             _ = int.TryParse(id, out int realID);
-            realID -= 10000000;
+            realID -= addToReplyID;
             var comment = await _context.Replies.Where(reply => reply.ID == realID)
                 .Include(reply => reply.Author).FirstOrDefaultAsync();
             var returnValue = new { 
@@ -151,6 +158,41 @@ namespace SnackisForum.Pages
                 title = string.IsNullOrWhiteSpace(comment.Title) ? "Ingen rubrik" : comment.Title, 
                 date = comment.DaysAgo(), 
                 picture = string.IsNullOrWhiteSpace(comment.Author.ProfileImagePath) ? "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" : comment.Author.ProfileImagePath };
+            return new JsonResult(returnValue);
+        }
+
+
+        public async Task<JsonResult> OnGetLoadThreadAsync(string id)
+        {
+            _ = int.TryParse(id, out int realID);
+            realID -= addToThreadID;
+            var thread = await _context.Threads.Where(thread => thread.ID == realID)
+                .Include(thread => thread.CreatedBy).FirstOrDefaultAsync();
+            var returnValue = new
+            {
+                comment = thread.Body,
+                poster = thread.CreatedBy.UserName,
+                title = thread.Title,
+                date = thread.CreatedOn.ToShortDateString() + " " + thread.CreatedOn.ToShortTimeString(),
+                picture = string.IsNullOrWhiteSpace(thread.CreatedBy.ProfileImagePath) ? "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" : thread.CreatedBy.ProfileImagePath
+            };
+            return new JsonResult(returnValue);
+        }
+
+        public async Task<JsonResult> OnGetLoadSubforumAsync(string id)
+        {
+            _ = int.TryParse(id, out int realID);
+            realID -= 1000000;
+            var thread = await _context.Threads.Where(thread => thread.ID == realID)
+                .Include(thread => thread.CreatedBy).FirstOrDefaultAsync();
+            var returnValue = new
+            {
+                comment = thread.Body,
+                poster = thread.CreatedBy.UserName,
+                title = thread.Title,
+                date = thread.CreatedOn.ToShortDateString() + " " + thread.CreatedOn.ToShortTimeString(),
+                picture = ""
+            };
             return new JsonResult(returnValue);
         }
 
