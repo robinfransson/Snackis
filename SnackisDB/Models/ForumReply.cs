@@ -52,7 +52,7 @@ namespace SnackisDB.Models
             }
             else if (daysAgo < 8)
             {
-                return $"för {Math.Round(daysAgo, 0)} dagar sedan";
+                return $"för {Math.Round(daysAgo, 0)} dagar sedan kl {hours}:{minutes}";
             }
             else
             {
