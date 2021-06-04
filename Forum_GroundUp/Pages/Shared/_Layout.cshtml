@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using SnackisDB.Models.Identity;
+@using System.Threading.Tasks;
+
 @inject UserManager<SnackisUser> userManager;
 @inject SignInManager<SnackisUser> signInManager;
 @inject SnackisDB.Models.SnackisContext context;
@@ -9,6 +11,7 @@
     bool loggedIn = signInManager.IsSignedIn(User);
 
     SnackisUser currentUser = loggedIn ? userManager.GetUserAsync(User).Result : null;
+    int adminUsers = userManager.GetUsersInRoleAsync("Admin").Result.Count;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -37,16 +40,18 @@
     <header class="">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex fixed-top" style="height:3rem;">
             <div class="flex-column ps-5">
-                <a class="navbar-brand" href="/"><span class="material-icons-outlined px-2">
-    question_answer
-</span>Snackis</a>
+                <a class="navbar-brand" href="/">
+                    <span class="material-icons-outlined px-2">
+                        question_answer
+                    </span>Snackis
+                </a>
             </div>
             <div class="col d-flex justify-content-center noselect" style="height:100%;width:100%;z-index:5">
 
             </div>
             <div class="col d-flex justify-content-end noselect">
-                @if(loggedIn)
-            {
+                @if (loggedIn)
+                {
                     <partial name="_Messages" />
                 }
                 <div class="btn-group " id="dropdownmenu">
@@ -65,14 +70,15 @@
                     @if (profile.IsAdmin)
                     {
 
-                        <div class="dropdown-item" id="makeadmin">Du är admin!</div>
+                        <a href="/Admin/" style="text-decoration:none;"><div class="dropdown-item">Adminpanel</div></a>
                     }
-                    else
-                {
+                    else if (adminUsers == 0)
+                    {
 
-                    <div class="dropdown-item" id="makeadmin">Gör mig till admin!</div>
+                        <div class="dropdown-item" id="makeadmin">Gör mig till admin!</div>
 
                     }
+                    <a href="/TreeView" style="text-decoration:none;"><div class="dropdown-item">Träd</div></a>
                     <div class="dropdown-item clickable" id="" onclick="logout()">Logga ut</div>
                 </div>
                     }
@@ -83,7 +89,7 @@
             </div>
         </nav>
     </header>
-    
+
     <div class="container-fluid pt-5">
         @RenderBody()
     </div>

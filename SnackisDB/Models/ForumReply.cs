@@ -15,7 +15,9 @@ namespace SnackisDB.Models
         public int ID { get; set; }
 
         public ForumThread Thread { get; set; }
-        public SnackisUser Author { get; set; }
+#nullable enable
+        public SnackisUser? Author { get; set; }
+#nullable disable
         public SnackisUser ReplyTo { get; set; }
         public ForumReply RepliedComment { get; set; }
         public string Title { get; set; }

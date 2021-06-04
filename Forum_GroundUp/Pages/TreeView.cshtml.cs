@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisDB.Models.Identity;
+using SnackisForum.Injects;
 
 namespace SnackisForum.Pages
 {
@@ -20,7 +21,7 @@ namespace SnackisForum.Pages
         private readonly SnackisContext _context;
         private readonly ILogger<ThreadModel> _logger;
 
-        //lägger till stora tal på varje ID för att "children" i treeview ska hamna under rätt kategori
+        //lägger till stora tal på varje ID för att "children" i treeview ska hamna under rätt parent
         int addToForumID = 200000;
         int addToSubforumID = 500000;
         int addToThreadID = 1000000;
@@ -36,11 +37,30 @@ namespace SnackisForum.Pages
             _context = context;
             _signInManager = signInManager;
         }
+
+
+
+
+
+
+
         public void OnGet()
         {
 
         }
-#region Region 1
+
+
+
+        [BindProperty]
+        public ForumReply Reply { get; set; }
+        
+
+        [BindProperty]
+        public ForumThread Thread { get; set; }
+
+
+
+        #region Spaghettikod för att returnera forumet i formatet som JSTree vill ha
         public async Task<JsonResult> OnGetLoadForumAsync()
         {
             ViewData["ajax"] = true;
@@ -69,7 +89,7 @@ namespace SnackisForum.Pages
                                                  .AsSingleQuery().ToListAsync();
             var forums = Forum.Select(forum => new
             {
-                id = (forum.ID + addToForumID).ToString(),
+                id = "forum-" +forum.ID,
                 parent = "#",
                 text = forum.Name,
                 state = new
@@ -85,8 +105,8 @@ namespace SnackisForum.Pages
 
             var subforums = Forum.Select(forum => forum.Subforums.Select(sub => new
             {
-                id = (sub.ID + addToSubforumID).ToString(),
-                parent = (forum.ID + addToForumID).ToString(),
+                id = "subforum-" + sub.ID,
+                parent = "forum-" + forum.ID,
                 text = sub.Name,
                 state = new
                 {
@@ -106,8 +126,8 @@ namespace SnackisForum.Pages
                                              sub => sub.Threads.Select(
                                                         thread => new
                                                         {
-                                                            id = (thread.ID + addToThreadID).ToString(),
-                                                            parent = (sub.ID + addToSubforumID).ToString(),
+                                                            id = "thread-" + thread.ID.ToString(),
+                                                            parent = "subforum-" + sub.ID,
                                                             text = thread.Title,
                                                             state = new
                                                             {
@@ -116,7 +136,7 @@ namespace SnackisForum.Pages
                                                             a_attr = new
                                                             {
                                                                 @class = "thread-tree"
-                                                                
+
                                                             },
                                                             icon = "message"
                                                         }
@@ -125,8 +145,8 @@ namespace SnackisForum.Pages
                                        );
             var replies = Forum.Select(forum => forum.Subforums.SelectMany(sub => sub.Threads.SelectMany(thread => thread.Replies.Select(reply => new
             {
-                id = (reply.ID + addToReplyID).ToString(),
-                parent = reply.RepliedComment == null ? (thread.ID + addToThreadID).ToString() : (reply.RepliedComment.ID+ addToReplyID).ToString(),
+                id = "reply-" + reply.ID,
+                parent = reply.RepliedComment == null ? "thread-" + thread.ID.ToString() : "reply-" + reply.RepliedComment.ID,
                 text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
 
                 state = new
@@ -143,58 +163,122 @@ namespace SnackisForum.Pages
             forums.AddRange(replies);
             return new JsonResult(forums);
         }
-        #endregion 
+        #endregion
 
 
-        public async Task<JsonResult> OnGetLoadCommentAsync(string id)
+
+
+        #region PostThreadReply
+        public async Task<IActionResult> OnPostThreadReplyAsync(int threadID, int? repliedCommentID, [FromServices] UserProfile userProfile)
+        {
+            SnackisUser user = null;
+            if(userProfile.IsLoggedIn)
+            {
+
+                user = await _userManager.GetUserAsync(User);
+            }
+            Reply.Author = user;
+            Reply.DatePosted = DateTime.Now;
+            Reply.RepliedComment = await _context.Replies.FirstOrDefaultAsync(reply => reply.ID == repliedCommentID);
+
+            var thread = _context.Threads.Where(thread => thread.ID == threadID).
+                Include(thread => thread.Replies)
+                .Include(thread => thread.Parent).FirstOrDefault();
+            thread.Replies.Add(Reply);
+            int changes = await _context.SaveChangesAsync();
+            _logger.LogInformation(changes + " rows changed");
+            return RedirectToPage();
+        }
+        #endregion
+
+
+
+
+
+
+
+
+
+        #region CreateThread
+        public async Task<IActionResult> OnPostCreateThreadAsync(int subID, [FromServices] UserProfile userProfile)
+        {
+            if (!userProfile.IsLoggedIn)
+            {
+
+                return Page();
+            }
+            Thread.CreatedBy = await _userManager.GetUserAsync(User);
+            Thread.CreatedOn = DateTime.Now;
+
+            var subforum = _context.Subforums.Where(subforum => subforum.ID == subID).Include(sub => sub.Threads).FirstOrDefault();
+            subforum.Threads.Add(Thread);
+            int changes = await _context.SaveChangesAsync();
+            _logger.LogInformation($"{Thread.CreatedOn:ddMMyy HH:mm}:{changes} rows changed, added new thread ({Thread.Title}) to {subforum.Name} by {Thread.CreatedBy.UserName}");
+            return RedirectToPage();
+        }
+
+        #endregion
+
+
+        #region LoadComment
+
+        public async Task<PartialViewResult> OnGetLoadCommentAsync(string id)
         {
             _ = int.TryParse(id, out int realID);
-            realID -= addToReplyID;
             var comment = await _context.Replies.Where(reply => reply.ID == realID)
-                .Include(reply => reply.Author).FirstOrDefaultAsync();
-            var returnValue = new { 
-                comment = comment.Body, 
-                poster = comment.Author.UserName, 
-                title = string.IsNullOrWhiteSpace(comment.Title) ? "Ingen rubrik" : comment.Title, 
-                date = comment.DaysAgo(), 
-                picture = string.IsNullOrWhiteSpace(comment.Author.ProfileImagePath) ? "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" : comment.Author.ProfileImagePath };
-            return new JsonResult(returnValue);
+                .Include(reply => reply.Author)
+                .Include(reply => reply.Thread)
+                .FirstOrDefaultAsync();
+            return Partial("_ReplyModal", comment);
         }
 
+        #endregion
 
-        public async Task<JsonResult> OnGetLoadThreadAsync(string id)
+
+
+
+
+
+
+
+
+
+
+
+        #region LoadSubforum
+
+        public async Task<PartialViewResult> OnGetLoadSubforumAsync(string id)
         {
             _ = int.TryParse(id, out int realID);
-            realID -= addToThreadID;
-            var thread = await _context.Threads.Where(thread => thread.ID == realID)
-                .Include(thread => thread.CreatedBy).FirstOrDefaultAsync();
-            var returnValue = new
-            {
-                comment = thread.Body,
-                poster = thread.CreatedBy.UserName,
-                title = thread.Title,
-                date = thread.CreatedOn.ToShortDateString() + " " + thread.CreatedOn.ToShortTimeString(),
-                picture = string.IsNullOrWhiteSpace(thread.CreatedBy.ProfileImagePath) ? "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg" : thread.CreatedBy.ProfileImagePath
-            };
-            return new JsonResult(returnValue);
+            var subforum = await _context.Subforums.Where(sub => sub.ID == realID)
+                .FirstOrDefaultAsync();
+            return Partial("_ReplyModal", subforum);
         }
 
-        public async Task<JsonResult> OnGetLoadSubforumAsync(string id)
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+        #region Load Thread reply
+
+
+        public async Task<PartialViewResult> OnGetLoadThreadAsync(string id)
         {
             _ = int.TryParse(id, out int realID);
-            realID -= 1000000;
             var thread = await _context.Threads.Where(thread => thread.ID == realID)
                 .Include(thread => thread.CreatedBy).FirstOrDefaultAsync();
-            var returnValue = new
-            {
-                comment = thread.Body,
-                poster = thread.CreatedBy.UserName,
-                title = thread.Title,
-                date = thread.CreatedOn.ToShortDateString() + " " + thread.CreatedOn.ToShortTimeString(),
-                picture = ""
-            };
-            return new JsonResult(returnValue);
+
+            return Partial("_ReplyModal", thread);
         }
+        #endregion
 
     }
 }

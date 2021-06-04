@@ -69,7 +69,8 @@ namespace SnackisForum.Pages
                 {
                     UserName = username,
                     Email = email,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow,
+                    ProfileImagePath = "https://st4.depositphotos.com/1000507/24488/v/600/depositphotos_244889634-stock-illustration-user-profile-picture-isolate-background.jpg"
                 };
                 if (_userManager is null)
                 {

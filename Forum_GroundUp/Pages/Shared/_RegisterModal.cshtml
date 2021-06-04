@@ -4,7 +4,7 @@
 @{
 
 }
-@inject SnackisForum.Injects.UserProfile userProfile; 
+@inject SnackisForum.Injects.UserProfile userProfile;
 
 <div class="dropdown-menu dropdown-menu-end" id="">
     <form class="px-4 py-3 login-form">
@@ -27,12 +27,17 @@
 
     </form>
     <div class="dropdown-divider"></div>
-    <div class="dropdown-item" data-toggle="modal" data-target="#exampleModal" onclick="$('#registerModal').modal('show')">Registrera ny användare</div>
-    <a class="dropdown-item" href="#">Glömt lösenord</a>
-</div>
+    <div class="dropdown-item" onclick="$('#registerModal').appendTo('body').modal('show');">Registrera ny användare</div>
 
+
+
+    <a class="dropdown-item" href="#">Glömt lösenord</a>
+
+    <a href="/TreeView" style="text-decoration:none;"><div class="dropdown-item">Träd</div></a>
+
+</div>
 <!-- Modal -->
-<div class="modal fade " id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade " id="registerModal" tabindex="-5" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

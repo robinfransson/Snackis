@@ -1,0 +1,254 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@inject SnackisForum.Injects.UserProfile userProfile;
+@model object
+
+@if (Model is SnackisDB.Models.ForumReply reply)
+{
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-start">
+                        <div class="modal-title h5 ms-0" id="exampleModalTitle">
+
+
+                            @if (reply.RepliedComment == null)
+                            {
+                                @Html.Raw("Svar till " + reply.Thread.Title);
+                            }
+                            else if (reply.RepliedComment != null)
+                            {
+                                @Html.Raw("Svar till " + reply.RepliedComment.Title);
+                            }
+
+
+
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <button type="button" class="close" onclick="$('#exampleModal').modal('hide')" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    @reply.DaysAgo()
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="" id="exampleModalBody">
+                <div class="row">
+                    <div class="col-2 ms-2 mt-2 ">
+
+                        @if (reply.Author != null)
+                        {
+
+                            <img src="@reply.Author.ProfileImagePath" class="profile-picture " id="profilePicture" />
+                            <h6 id="exampleModalUser" class="">@reply.Author.UserName</h6>
+                            <div class="">Gick med</div>
+                            <div class="">@reply.Author.CreatedOn.ToShortDateString()</div>
+                        }
+                        else
+                        {
+                            <h6 id="exampleModalUser" class="">Anonym</h6>
+                        }
+                    </div>
+                    <div class="col border-start ">
+                        <div class="fw-bold pb-2">
+                            @reply.Title
+                        </div>
+                        <div class="row text-break w-75 h-auto ps-2" style="height:10rem; min-height: 10rem;">
+
+                            @reply.Body
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="container">
+                <div class="row">
+                    <form method="post" asp-page-handler="ThreadReply" asp-route-threadID="@reply.Thread.ID" asp-route-repliedCommentID="@reply.ID">
+                        @Html.AntiForgeryToken()
+                        <div class="">
+                            Svarar på @reply.Title som @Html.Raw(!userProfile.IsLoggedIn ? "Anonym" : userProfile.Username)
+                        </div>
+                        <div>
+                            <label for="Reply_Title" class="mb-1">Titel</label>
+                        </div>
+                        <input type="text" id="Reply_Title" name="Reply.Title" required />
+                        <div>
+                            <label for="Reply_Body" class="mb-1">Svar</label>
+                        </div>
+                        <textarea id="Reply_Body" class=" w-100" style="height:10rem;" name="Reply.Body" required></textarea>
+
+                        <div class="col-1 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-secondary">Svara</button>
+                        </div>
+                    </form>
+                    <div class="col d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary">Svara</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+else if (Model is SnackisDB.Models.ForumThread thread)
+{
+    <div class="modal-content d-flex">
+        <div class="modal-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-start">
+                        <div class="modal-title h5 ms-0" id="exampleModalTitle">
+
+
+                            @thread.Title
+
+
+
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <button type="button" class="close" onclick="$('#exampleModal').modal('hide')" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    @thread.CreatedOn.ToShortDateString(), @thread.CreatedOn.ToShortTimeString()
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="" id="exampleModalBody">
+                <div class="row">
+                    <div class="col-2 ms-2 mt-2 ">
+                        <img src="@thread.CreatedBy.ProfileImagePath" class="profile-picture " id="profilePicture" />
+                        <h6 id="exampleModalUser" class="">@thread.CreatedBy.UserName</h6>
+                        <div class="">Gick med</div>
+                        <div class="">@thread.CreatedBy.CreatedOn.ToShortDateString()</div>
+
+
+                    </div>
+                    <div class="col border-start ps-3">
+                        <div class="row text-break w-75">
+
+                            @thread.Body
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="container">
+                <div class="row">
+
+                    <form method="post" asp-page-handler="ThreadReply" asp-route-threadID="@thread.ID">
+                        @Html.AntiForgeryToken()
+                        <div class="">
+                            Svarar i tråden @thread.Title som @Html.Raw(!userProfile.IsLoggedIn ? "Anonym" : userProfile.Username)
+                        </div>
+                        <div>
+                            <label for="Reply_Title" class="mb-1">Titel</label>
+                        </div>
+                        <input type="text" id="Reply_Title" name="Reply.Title" required />
+                        <div>
+                            <label for="Reply_Body" class="mb-1">Svar</label>
+                        </div>
+                        <textarea id="Reply_Body" class=" w-100" style="height:10rem;" name="Reply.Body" required></textarea>
+
+                        <div class="col-1 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-secondary">Svara</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (Model is SnackisDB.Models.Subforum sub)
+{
+
+    <div class="modal-content d-flex">
+        <div class="modal-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-start">
+                        <div class="modal-title h5 ms-0" id="exampleModalTitle">
+                            @if (userProfile.IsLoggedIn)
+                            {
+
+                                @Html.Raw("Nytt inlägg i " + @sub.Name);
+                            }
+                            else
+                            {
+                                @sub.Name
+                            }
+
+
+
+
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <button type="button" class="close" onclick="$('#exampleModal').modal('hide')" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="" id="exampleModalBody">
+
+                @if (userProfile.IsLoggedIn)
+                {
+
+                    <form method="post" asp-page-handler="CreateThread" asp-route-subID="@sub.ID">
+                        <div class="col border-start ps-3">
+
+                            @Html.AntiForgeryToken()
+                            <div class="">
+                                Skapar ny tråd i @sub.Name som @userProfile.Username
+                            </div>
+                            <div>
+                                <label for="Reply_Title" class="mb-1">Trådtitel</label>
+                            </div>
+                            <input type="text" id="Thread_Title" name="Thread.Title" required />
+                            <div>
+                                <label for="Thread_Body" class="mb-1 pe-3">Inläggstext</label>
+                            </div>
+                            <textarea id="Thread_Body" class=" w-75 pe-3" style="height:10rem;" name="Thread.Body" required></textarea>
+
+
+                        </div>
+
+                        <div class="d-flex justify-content-end me-3 pb-2">
+                            <button type="submit" class="btn btn-secondary">Svara</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <h3 class="text-center">Logga in för att skapa ett inlägg!</h3>
+                }
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -59,7 +59,7 @@
                                         <div class="col">
                                             <div class="font-monospace text-end text-decoration-underline" style="font-size:125%;"><a href="@Url.Content($"~/Thread/{lastReply.Thread.ID}")">@lastReply.Thread.Title</a></div>
                                             <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DaysAgo()</div>
-                                            <div class="font-monospace text-end" style="font-size:75%;">av @lastReply.Author.UserName</div>
+                                            <div class="font-monospace text-end" style="font-size:75%;">av @Html.Raw(lastReply.Author == null ? "Anonym" : lastReply.Author.UserName)</div>
                                         </div>
                                         <div class="col me-4 mt-3" style="max-width:3rem">
                                             <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="@lastReply.ID" data-thread-id="@lastReply.Thread.ID">

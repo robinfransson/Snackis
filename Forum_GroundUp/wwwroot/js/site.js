@@ -84,7 +84,7 @@ function createTree(data) {
             e.preventDefault();
             e.stopPropagation();
             let nodeType = data.node.a_attr.class;
-            let id = data.node.id;
+            let id = parseInt(data.node.id.split("-")[1]);
             console.log(nodeType);
             switch (nodeType) {
                 case "forum-tree":
@@ -92,6 +92,7 @@ function createTree(data) {
                     
                     break;
                 case "sub-tree":
+                    loadSubforum(id)
                     console.log("subforum clicked");
                     break;
                 case "thread-tree":
@@ -117,38 +118,16 @@ function createTree(data) {
         });
 }
 
-function showModal(title, user, message,date,picture) {
-    let modal = $('#exampleModal');
-    let profilePicture = $('#profilePicture');
-
-
-
-    $('#exampleModalTitle').text(title);
-    $('#exampleModalBody').text(message)
-    $('#exampleModalUser').text(user);
-    $('#exampleModalDatePosted').text(date)
-
-    if (picture == "" && !profilePicture.hasClass('d-none')) {
-
-        $('#profilePicture').addClass("d-none");
-    }
-    else if (picture != "" && profilePicture.hasClass('d-none')) {
-        profilePicture.removeClass('d-none');
-        $('#profilePicture').attr("src", picture);
-
-    }
-    else {
-
-        $('#profilePicture').attr("src", picture);
-    }
-    modal.modal('show');
+function showModal(result) {
+    $('#exampleModal > #exampleModalMain').html(result)
+    $("#exampleModal").modal('show');
 }
 
 function loadReply(id) {
     $.get("/treeview?handler=LoadComment&id="+id, function (result) {
         // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
-        showModal(result.title, result.poster, result.comment, result.date, result.picture)
-        console.log(result.title, result.poster, result.comment, result.date, result.picture)
+        showModal(result)
+        //console.log(result.title, result.poster, result.comment, result.date, result.picture)
         
     })
 }
@@ -156,8 +135,16 @@ function loadReply(id) {
 function loadThread(id) {
     $.get("/treeview?handler=LoadThread&id=" + id, function (result) {
         // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
-        showModal(result.title, result.poster, result.comment, result.date, result.picture)
-        console.log(result.title, result.poster, result.comment, result.date, result.picture)
+        showModal(result)
+        //console.log(result.title, result.poster, result.comment, result.date, result.picture)
+
+    })
+}
+function loadSubforum(id) {
+    $.get("/treeview?handler=LoadSubforum&id=" + id, function (result) {
+        // comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo() 
+        showModal(result)
+        //console.log(result.title, result.poster, result.comment, result.date, result.picture)
 
     })
 }
