@@ -21,12 +21,6 @@ namespace SnackisForum.Pages
         private readonly SnackisContext _context;
         private readonly ILogger<ThreadModel> _logger;
 
-        //lägger till stora tal på varje ID för att "children" i treeview ska hamna under rätt parent
-        int addToForumID = 200000;
-        int addToSubforumID = 500000;
-        int addToThreadID = 1000000;
-        int addToReplyID = 10000000;
-
 
 
         public TreeViewModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,

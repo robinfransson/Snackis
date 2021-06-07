@@ -91,7 +91,31 @@ function addForum(name) {
 
     });
 }
+function checkUsername() {
+    console.log();
+    let submit = $('#sendmessage');
+    if ($('#usernamefield').val().length > 0) {
+    $.get({
+        url: "/messages?handler=userexists",
+        data: { username : $('#usernamefield').val() },
+        success: function (result) {
+            console.log(result);
+            if (result.exists == true) {
+                $('.userexists').removeClass('text-danger');
+                $('.userexists').addClass("text-success");
+                $('.userexists').text("check_circle");
+            }
+            else {
 
+                $('.userexists').removeClass('text-success');
+                $('.userexists').addClass("text-danger");
+                $('.userexists').text("error");
+            }
+            submit.prop("disabled", !result.exists)
+        }
+    });
+    }
+}
 
 $(document).ready(function () {
 
@@ -113,7 +137,9 @@ $(document).ready(function () {
             url: '/messages?handler=compose',
 
             success: function (result) {
-                $('chat-container').html(result);
+                console.log(result);
+                $('.chat-container').html(result);
+                $('#usernamefield').on("input", checkUsername)
             },
             fail: function f() {
                 console.log('clicked')

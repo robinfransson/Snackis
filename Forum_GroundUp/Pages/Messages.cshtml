@@ -1,6 +1,7 @@
 ﻿@page
 @model SnackisForum.Pages.MessagesModel
 @using SnackisForum.Injects;
+@inject SnackisDB.Models.SnackisContext context;
 @{
 }
 @inject UserProfile userProfile;
@@ -20,23 +21,23 @@
                         </tr>
                     </thead>
                     <tbody class="clickable message-table ">
-                        @if (Model.Messages.Any())
+                        @if (Model.Chats != null && Model.Chats.Any())
                         {
-                            var newList = Model.Messages.Select(group => new
+                            var newList = Model.Chats.Select(chat => new
                             {
-                                group,
-                                lastMessage = group.OrderByDescending(message => message.DateSent).FirstOrDefault()
+                                chat,
+                                lastMessage = chat.Messages.OrderByDescending(message => message.DateSent).FirstOrDefault()
                             }).OrderByDescending(obj => obj.lastMessage.DateSent).ToList();
 
                             @foreach (var obj in newList)
                             {
+                                var chattingWith = obj.chat.Participant1 == userProfile.CurrentUser ? obj.chat.Participant2 : obj.chat.Participant1;
                                 var lastMessage = obj.lastMessage;
-                                string chattingWith = lastMessage.Sender == userProfile.Username ? lastMessage.Reciever : lastMessage.Sender;
-                                int newMessages = obj.group.Count(message => !message.HasBeenViewed && message.Reciever == userProfile.Username);
+                                int newMessages = obj.chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != userProfile.Username);
 
                                 <tr>
-                                    <td class="open-messages" data-chat-id="@obj.group.Key">
-                                        <div>@chattingWith</div>
+                                    <td class="open-messages" data-chat-id="@obj.chat.ID">
+                                        <div>@chattingWith.UserName</div>
                                         @if (newMessages > 0)
                                         {
                                             string message = newMessages == 1 ? "nytt meddelande" : "nya meddelanden";

@@ -17,9 +17,18 @@ namespace SnackisForum.Injects
         private HttpContext httpContext;
         public int UnreadMessages { 
             get {
-                return _context.Messages.Count(message => message.Reciever == Username && !message.HasBeenViewed);
+                return !_context.Chats.Any(chat => chat.Participant1 == CurrentUser || chat.Participant2 == CurrentUser) ? 0 :
+                                          _context.Chats
+                                          .Where(chat => chat.Participant1 == CurrentUser || chat.Participant2 == CurrentUser)
+                                          .Include(chat => chat.Messages)
+                                          .AsEnumerable()
+                                          .Sum(chat => chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != Username));
+                                          
                 }
         }
+
+        public SnackisUser CurrentUser => _userManager.GetUserAsync(httpContext.User).Result;
+
         public string Username => _userManager.GetUserAsync(httpContext.User).Result.UserName;
 
         public string UserID => _userManager.GetUserId(httpContext.User);

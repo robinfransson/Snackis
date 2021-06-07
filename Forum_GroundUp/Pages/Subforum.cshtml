@@ -46,8 +46,9 @@ else
                         var newList = Model.Subforum.Threads.Select(thread => new
                         {
                             thread,
-                            lastReply = thread.Replies.OrderByDescending(reply => reply.DatePosted).FirstOrDefault()
-                        }).OrderByDescending(x => x.lastReply.DatePosted)
+                            lastReply = thread.Replies.Any() ? thread.Replies.OrderByDescending(reply => reply.DatePosted).FirstOrDefault() : null
+                        })
+                            .OrderByDescending(x => x.lastReply.DatePosted)
                             .ToList();
                         @foreach (var obj in newList)
                         {

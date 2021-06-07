@@ -11,12 +11,9 @@ namespace SnackisDB.Models
 {
     public class Message
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public int ChatID { get; set; }
+        public Chat Chat { get; set; }
         public string Sender { get; set; }
-        public string Reciever { get; set; }
         public string MessageTitle { get; set; }
         public string MessageBody { get; set; }
         [DefaultValue(false)]

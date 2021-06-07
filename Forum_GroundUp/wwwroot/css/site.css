@@ -22,7 +22,41 @@ for details on configuring this project to bundle and minify static web assets. 
         height: auto !important;
     }
 */
+.chatContainer {
+    font-size: 18px;
+    position: relative;
+    background-color: #90C3D4;
+    width: 300px;
+    height: 600px;
+    overflow-y: scroll;
+    float: right;
+    display: inline-block;
+    margin-left: 8px;
+    border-radius: 2px;
+}
 
+    .chatContainer p {
+        padding: 3px;
+        margin: 0;
+    }
+
+.chatArea {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: inline-block;
+    margin-top: 100%;
+}
+
+#chatInput {
+    width: 100%;
+    padding: 6px 12px;
+}
+
+#cSubmitButton {
+    width: 80%;
+    display: inline-block;
+}
 
 footer{
     height:20rem;
