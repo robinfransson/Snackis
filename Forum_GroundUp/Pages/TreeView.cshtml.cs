@@ -169,6 +169,133 @@ namespace SnackisForum.Pages
         #endregion
 
 
+        #region Öppnar de noder som länkar dit användaren gjorde ett inlägg
+        public async Task<JsonResult> OnGetNewEntryAsync(string nodeID)
+        {
+            // Alternative format of the node (id & parent are required)
+            //          {
+            //              id: "string" // required
+            //parent: "string" # == Top- node , else parents id == place under // required
+            //text: "string" // node text
+            //icon: "string" // string for custom 
+            //state:
+            //              {
+            //                  opened: boolean  // is the node open
+            //              disabled  : boolean  // is the node disabled
+            //              selected  : boolean  // is the node selected
+            //},
+            //li_attr: { }  // attributes for the generated LI node
+            //              a_attr: { }  // attributes for the generated A node
+            //          }
+            //      }
+
+            List<Forum> Forum = await _context.Forums.Include(forum => forum.Subforums)
+
+                                              .ThenInclude(subforum => subforum.Threads)
+                                              .ThenInclude(thread => thread.Replies)
+                                                 .ThenInclude(replies => replies.Author)
+                                                 .AsSingleQuery().ToListAsync();
+            var forums = Forum.Select(forum => new
+            {
+                id = "forum-" + forum.ID,
+                parent = "#",
+                text = forum.Name,
+                state = new
+                {
+                    opened = true
+                },
+                a_attr = new
+                {
+                    @class = "forum-tree"
+                },
+                icon = "forum",
+            }).ToList();
+
+            var subforums = Forum.SelectMany(forum => forum.Subforums.Select(sub => new
+            {
+                id = "subforum-" + sub.ID,
+                parent = "forum-" + forum.ID,
+                text = sub.Name,
+                state = new
+                {
+                    opened = false
+                },
+                a_attr = new
+                {
+                    @class = "sub-tree"
+                },
+                icon = "forum",
+
+            })).ToList();
+            forums.AddRange(subforums);
+
+            var threads = Forum.SelectMany(forum => forum.Subforums.SelectMany(
+                                                    sub => sub.Threads.Select(
+                                                        thread => new
+                                                        {
+                                                            id = "thread-" + thread.ID.ToString(),
+                                                            parent = "subforum-" + sub.ID,
+                                                            text = thread.Title,
+                                                            state = new
+                                                            {
+                                                                opened = false
+                                                            },
+                                                            a_attr = new
+                                                            {
+                                                                @class = "thread-tree"
+
+                                                            },
+                                                            icon = "message"
+                                                        }
+                                                   )
+                                             )
+                                       );
+            var replies = Forum.SelectMany(forum => forum.Subforums.SelectMany(
+                                                sub => sub.Threads.SelectMany(
+                                                thread => thread.Replies.Select(
+                                                reply => new
+                                                {
+
+                                                    id = "reply-" + reply.ID,
+                                                    parent = reply.RepliedComment == null ? "thread-" + thread.ID : "reply-" + reply.RepliedComment.ID,
+                                                    text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
+
+                                                    state = new
+                                                    {
+                                                        opened = false
+                                                    },
+                                                    a_attr = new
+                                                    {
+                                                        @class = "reply-tree"
+                                                    },
+                                                    icon = "message"
+                                                })))).ToList();
+            forums.AddRange(threads);
+            forums.AddRange(replies);
+
+
+            while(!nodeID.StartsWith("forum"))
+            {
+                var current = forums.Where(obj => obj.id == nodeID).FirstOrDefault();
+                forums.Remove(current);
+                forums.Add(new
+                {
+                    id = nodeID,
+                    parent = current.parent,
+                    text = current.text,
+
+                    state = new
+                    {
+                        opened = true
+                    },
+                    a_attr = current.a_attr,
+                    icon = current.icon
+                });
+                nodeID = current.parent;
+            }
+            return new JsonResult(forums);
+        }
+        #endregion
 
 
         #region PostThreadReply
@@ -190,16 +317,9 @@ namespace SnackisForum.Pages
             thread.Replies.Add(Reply);
             int changes = await _context.SaveChangesAsync();
             _logger.LogInformation(changes + " rows changed");
-            return RedirectToPage();
+            return RedirectToPage("/treeview", new { nodeID = "reply-" + Reply.ID });
         }
         #endregion
-
-
-
-
-
-
-
 
 
         #region CreateThread
@@ -207,7 +327,6 @@ namespace SnackisForum.Pages
         {
             if (!userProfile.IsLoggedIn)
             {
-
                 return Page();
             }
             Thread.CreatedBy = await _userManager.GetUserAsync(User);
@@ -217,7 +336,8 @@ namespace SnackisForum.Pages
             subforum.Threads.Add(Thread);
             int changes = await _context.SaveChangesAsync();
             _logger.LogInformation($"{Thread.CreatedOn:ddMMyy HH:mm}:{changes} rows changed, added new thread ({Thread.Title}) to {subforum.Name} by {Thread.CreatedBy.UserName}");
-            return RedirectToPage();
+
+            return RedirectToPage("/treeview", new { nodeID = "thread-" + Thread.ID });
         }
 
         #endregion
@@ -238,16 +358,6 @@ namespace SnackisForum.Pages
         #endregion
 
 
-
-
-
-
-
-
-
-
-
-
         #region LoadSubforum
 
         public async Task<PartialViewResult> OnGetLoadSubforumAsync(string id)
@@ -259,15 +369,6 @@ namespace SnackisForum.Pages
         }
 
         #endregion
-
-
-
-
-
-
-
-
-
 
 
         #region Load Thread reply
