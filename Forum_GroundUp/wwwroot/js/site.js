@@ -149,6 +149,36 @@ function loadSubforum(id) {
     })
 }
 
+
+function addSubforum(name, parentID) {
+    $.post({
+        data: { subName: name, parent : parentID},
+        url: "/Ajax?Handler=CreateSubforum",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+        },
+        success: function () {
+            location.reload();
+        }
+
+    });
+}
+
+function addForum(name) {
+    $.post({
+        data: { forumName : name },
+        url: "/Ajax?Handler=CreateForum",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+        },
+        success: function () {
+            location.reload();
+        }
+
+    });
+}
+
+
 $(document).ready(function () {
 
 
@@ -237,10 +267,28 @@ $(document).ready(function () {
 
 
 
+    $('.add-forum').click(function () {
+        //let forumid = $(this).data("forum-id");
+
+        var forum = prompt("Skriv in ett namn på forumet:", "");
+        if (forum == null || forum == "") {
+            alert("Avbröt");
+        } else {
+            addForum(forum);
+        }
+    });
 
 
+    $('.add-subforum').click(function () {
+        let forumid = $(this).data("forum-id");
 
-
+        var subforumname = prompt("Skriv in ett namn på delforumet:", "");
+        if (subforumname == null || subforumname == "") {
+            alert("Avbröt");
+        } else {
+            addSubforum(subforumname,forumid);
+        }
+    });
 
 
 $('.messages').mouseleave(function () {

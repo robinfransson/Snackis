@@ -17,6 +17,7 @@ namespace SnackisDB.Models
         public DbSet<Subforum> Subforums { get; set; }
         public DbSet<ForumThread> Threads { get; set; }
         public DbSet<ForumReply> Replies { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
     }
 }

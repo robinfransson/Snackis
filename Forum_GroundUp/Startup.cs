@@ -31,8 +31,15 @@ namespace SnackisForum
         {
             if(CurrentEnvironment.IsDevelopment())
             {
-
-                services.AddRazorPages().AddRazorRuntimeCompilation();
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                });
+                services.AddRazorPages(options =>
+                {
+                    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+                }
+                ).AddRazorRuntimeCompilation();
                 services.AddLiveReload();
                 services.AddDbContext<SnackisContext>(options =>
                 {
@@ -41,8 +48,14 @@ namespace SnackisForum
             }
             else
             {
-
-                services.AddRazorPages();
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                });
+                services.AddRazorPages(options =>
+                {
+                    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+                });
                 services.AddDbContext<SnackisContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("azure"));
@@ -68,11 +81,20 @@ namespace SnackisForum
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 5;
+               
             })
                 .AddEntityFrameworkStores<SnackisContext>()
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders();
+
+
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Index";
+                options.LoginPath = "/Index";
+            });
 
         }
 

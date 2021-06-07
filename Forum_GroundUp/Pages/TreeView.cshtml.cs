@@ -53,7 +53,7 @@ namespace SnackisForum.Pages
 
         [BindProperty]
         public ForumReply Reply { get; set; }
-        
+
 
         [BindProperty]
         public ForumThread Thread { get; set; }
@@ -67,9 +67,9 @@ namespace SnackisForum.Pages
             // Alternative format of the node (id & parent are required)
             //          {
             //              id: "string" // required
-            //parent: "string" // required
+            //parent: "string" # == Top- node , else parents id == place under // required
             //text: "string" // node text
-            //icon: "string" // string for custom
+            //icon: "string" // string for custom 
             //state:
             //              {
             //                  opened: boolean  // is the node open
@@ -89,7 +89,7 @@ namespace SnackisForum.Pages
                                                  .AsSingleQuery().ToListAsync();
             var forums = Forum.Select(forum => new
             {
-                id = "forum-" +forum.ID,
+                id = "forum-" + forum.ID,
                 parent = "#",
                 text = forum.Name,
                 state = new
@@ -103,7 +103,7 @@ namespace SnackisForum.Pages
                 icon = "forum",
             }).ToList();
 
-            var subforums = Forum.Select(forum => forum.Subforums.Select(sub => new
+            var subforums = Forum.SelectMany(forum => forum.Subforums.Select(sub => new
             {
                 id = "subforum-" + sub.ID,
                 parent = "forum-" + forum.ID,
@@ -118,12 +118,11 @@ namespace SnackisForum.Pages
                 },
                 icon = "forum",
 
-            })).FirstOrDefault();
+            })).ToList();
             forums.AddRange(subforums);
 
-            var threads = Forum.SelectMany(forum =>
-                                       forum.Subforums.SelectMany(
-                                             sub => sub.Threads.Select(
+            var threads = Forum.SelectMany(forum => forum.Subforums.SelectMany(
+                                                    sub => sub.Threads.Select(
                                                         thread => new
                                                         {
                                                             id = "thread-" + thread.ID.ToString(),
@@ -143,22 +142,26 @@ namespace SnackisForum.Pages
                                                    )
                                              )
                                        );
-            var replies = Forum.Select(forum => forum.Subforums.SelectMany(sub => sub.Threads.SelectMany(thread => thread.Replies.Select(reply => new
-            {
-                id = "reply-" + reply.ID,
-                parent = reply.RepliedComment == null ? "thread-" + thread.ID.ToString() : "reply-" + reply.RepliedComment.ID,
-                text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
+            var replies = Forum.SelectMany(forum => forum.Subforums.SelectMany(
+                                                sub => sub.Threads.SelectMany(
+                                                thread => thread.Replies.Select(
+                                                reply => new
+                                                {
 
-                state = new
-                {
-                    opened = false
-                },
-                a_attr = new
-                {
-                    @class = "reply-tree"
-                },
-                icon = "message"
-            })))).FirstOrDefault();
+                                                    id = "reply-" + reply.ID,
+                                                    parent = reply.RepliedComment == null ? "thread-" + thread.ID: "reply-" + reply.RepliedComment.ID,
+                                                    text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
+
+                                                    state = new
+                                                    {
+                                                        opened = false
+                                                    },
+                                                    a_attr = new
+                                                    {
+                                                        @class = "reply-tree"
+                                                    },
+                                                    icon = "message"
+                                                })))).ToList();
             forums.AddRange(threads);
             forums.AddRange(replies);
             return new JsonResult(forums);
@@ -172,7 +175,7 @@ namespace SnackisForum.Pages
         public async Task<IActionResult> OnPostThreadReplyAsync(int threadID, int? repliedCommentID, [FromServices] UserProfile userProfile)
         {
             SnackisUser user = null;
-            if(userProfile.IsLoggedIn)
+            if (userProfile.IsLoggedIn)
             {
 
                 user = await _userManager.GetUserAsync(User);

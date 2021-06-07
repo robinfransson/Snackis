@@ -9,29 +9,36 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisDB.Models.Identity;
+using SnackisForum.Injects;
 
 namespace SnackisForum.Pages
 {
     public class AjaxModel : PageModel
     {
-
+        #region Constructor and readonlies
         private readonly UserManager<SnackisUser> _userManager;
         private readonly SignInManager<SnackisUser> _signInManager;
         private readonly SnackisContext _context;
         private readonly ILogger<AjaxModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserProfile _userProfile;
 
 
 
-        public AjaxModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager, 
-                        SnackisContext context, ILogger<AjaxModel> logger, RoleManager<IdentityRole> roleManager)
+        public AjaxModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
+                        SnackisContext context, ILogger<AjaxModel> logger, RoleManager<IdentityRole> roleManager, UserProfile userProfile)
         {
             _userManager = userManager;
             _context = context;
             _signInManager = signInManager;
             _logger = logger;
             _roleManager = roleManager;
+            _userProfile = userProfile;
         }
+        #endregion
+
+
+        #region Make admin
         public async Task<JsonResult> OnPostMakeAdminAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -44,17 +51,27 @@ namespace SnackisForum.Pages
                 return new JsonResult(new { success = false });
 
         }
+
+        #endregion
+
+
+        #region Logout
         public async Task<JsonResult> OnPostLogoutAsync()
         {
             await _signInManager.SignOutAsync();
             return new JsonResult(new { loggedout = true });
         }
 
+
+        #endregion
+
+
+        #region Register
         public async Task<JsonResult> OnPostRegisterAsync(string email, string username, string password)
         {
 
             bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
-            if(!rolesExist)
+            if (!rolesExist)
             {
                 CreateRoles();
             }
@@ -97,7 +114,10 @@ namespace SnackisForum.Pages
             }
             return new JsonResult(new { success = false });
         }
+        #endregion
 
+
+        #region Login
         public async Task<JsonResult> OnPostLoginAsync(string username, string password, bool remember)
         {
             if (ModelState.IsValid)
@@ -108,7 +128,7 @@ namespace SnackisForum.Pages
                 {
                     var currentUser = await _context.Users.FirstOrDefaultAsync(user => user.UserName == username);
                     _logger.LogInformation("{0} logged in.", currentUser.UserName);
-                    return new JsonResult(new { success = true, lockout = false});
+                    return new JsonResult(new { success = true, lockout = false });
                 }
                 if (result.IsLockedOut)
                 {
@@ -126,12 +146,10 @@ namespace SnackisForum.Pages
             return new JsonResult(new { success = false, lockout = false });
         }
 
+        #endregion
 
 
-
-
-
-
+        #region Create roles
 
         private async void CreateRoles()
         {
@@ -141,85 +159,46 @@ namespace SnackisForum.Pages
             }, new IdentityRole
             {
                 Name = "User"
-            } 
+            }
             };
-            foreach(var role in roles)
-            { 
-            await _roleManager.CreateAsync(role);
+            foreach (var role in roles)
+            {
+                await _roleManager.CreateAsync(role);
             }
         }
 
+        #endregion
 
+        #region Create Forum
+        public void OnPostCreateForum(string forumName)
+        {
+            if(_userProfile.IsAdmin && _userProfile.IsLoggedIn)
+            {
 
+            var forum = new Forum()
+            {
+                Name = forumName
+            };
+            _context.Forums.Add(forum);
+            _context.SaveChanges();
+            }
+        }
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //public async Task<JsonResult> OnGetRepliesAsync(int id)
-        //{
-        //    ViewData["ajax"] = true;
-        //    // Alternative format of the node (id & parent are required)
-        //    //          {
-        //    //              id: "string" // required
-        //    //parent: "string" // required
-        //    //text: "string" // node text
-        //    //icon: "string" // string for custom
-        //    //state:
-        //    //              {
-        //    //                  opened: boolean  // is the node open
-        //    //              disabled  : boolean  // is the node disabled
-        //    //              selected  : boolean  // is the node selected
-        //    //},
-        //    //li_attr: { }  // attributes for the generated LI node
-        //    //              a_attr: { }  // attributes for the generated A node
-        //    //          }
-        //    //      }
-
-        //    var o = await _context.Threads.Where(thread => thread.ID == id)?
-        //                                      .Include(thread => thread.Replies)
-        //                                         .ThenInclude(replies => replies.Poster)
-        //                                         .AsSingleQuery()
-        //                                .Select(thread => thread.Replies.Select(reply =>
-        //                                new
-        //                                {
-        //                                    id = reply.ID.ToString(),
-        //                                    parent = reply.ParentComment == null ? "#" : reply.ParentComment.ID.ToString(),
-        //                                    text = $"{reply.ReplyTitle} <span style='font-size: 75%'>av {reply.Poster.UserName} {reply.DaysAgo()}</span>" +
-        //                                    $"<div class='ms-4'>Visa Svara</div>",
-        //                                    state = new
-        //                                    {
-        //                                        opened = reply.Replies.Any()
-        //                                    },
-        //                                    icon = "comment"
-        //                                })).ToListAsync();
-        //    var returnValue = o[0];
-        //    return new JsonResult(returnValue);
-        //}
-        //public async Task<JsonResult> OnGetLoadCommentAsync(int id)
-        //{
-        //    var comment = await _context.Replies.Where(reply => reply.ID == id)
-        //        .Include(reply => reply.Author).FirstOrDefaultAsync();
-        //    var returnValue = new { comment = comment.Body, poster = comment.Author.UserName, title = comment.Title, date = comment.DaysAgo()};
-        //    return new JsonResult(returnValue);
-        //}
-
-        //private string LinkSection(int id)
-        //{
-        //    return "";
-        //}
-
+        #region Create subforum
+        public void OnPostCreateSubforum(string subName, int parent)
+        {
+            if (_userProfile.IsAdmin && _userProfile.IsLoggedIn)
+            {
+                var parentForum = _context.Forums.Where(forum => forum.ID == parent).Include(forum => forum.Subforums).FirstOrDefault();
+                var subforum = new Subforum()
+                {
+                    Name = subName
+                };
+                parentForum.Subforums.Add(subforum);
+                _context.SaveChanges();
+            }
+        }
+        #endregion
     }
 }
