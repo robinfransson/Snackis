@@ -12,14 +12,14 @@
             error
         </span>
         <div class="w-100 d-inline-block">
-            <input type="text" id="usernamefield" class="form-control w-100 d-inline-block" placeholder="Användarnamn" name="recipient">
+            <input type="text" id="usernamefield" class="form-control w-100 d-inline-block" placeholder="Användarnamn" name="recipient" required>
 
         </div>
     </fieldset>
     <fieldset class="d-inline-block w-100">
         <label for="usernamefield" class="text-white fs-2">Rubrik</label>
         <div class="w-100 d-inline-block">
-            <input type="text" id="usernamefield" class="form-control w-100 d-inline-block" placeholder="Rubrik" name="title">
+            <input type="text" id="usernamefield" class="form-control w-100 d-inline-block" placeholder="Rubrik" name="title" required>
 
         </div>
     </fieldset>
@@ -28,7 +28,7 @@
 
     <fieldset class="w-100" action="?Handler=SendMessage">
         <legend for="messagebody" class="text-white">Meddelande</legend>
-        <textarea id="messagebody" rows="10" class="w-100" name="message"></textarea>
+        <textarea id="messagebody" rows="10" class="w-100" name="message" required></textarea>
     </fieldset>
     <div>
 

@@ -93,7 +93,7 @@
     <div class="container-fluid pt-5">
         @RenderBody()
     </div>
-    <footer></footer>
+    <div id="footer"><partial name="_CookieConsentPartial" /></div>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

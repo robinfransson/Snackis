@@ -1,65 +1,27 @@
-﻿////require("jquery");
-
-//let url = "/?Handler=LoadMessages";
-let timesRan = 0;
-//let myTimer = setInterval(chatLoad, 5000);
-let autoScroll = true;
-
+﻿///*require("jquery");
 var token = $('input[name="__RequestVerificationToken"]').val();
 
 
 let path = window.location.pathname.toLowerCase();
 
 
+var chatRefreshTimer;
 
 
 
 
 
 
-
-async function chatLoad() {
-    if (timesRan < 100) {
-        timesRan++;
-        $.get(url, function (data) {
-            console.log(scrollAuto());
-            $(".messages").append(getMessage(data));
-            console.log(autoScroll);
-            if (autoScroll) {
-                setTimeout(1000);
-                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
-            }
-
-
-        })
-    }
-}
-
-
-function getMessage(data) {
-    console.log(data);
-    if (data.reciever == false) {
-        return '<div class="justify-content-start row">' +
-            '<div class="box sb2 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
-            '</div >';
-    }
-    else {
-
-        return '<div class="justify-content-end row">' +
-            '<div class="box sb1 shadow text-break" style="max-width: 65%">' + data.message + '</div>' +
-            '</div>';
-    }
-}
 
 
 function scrollAuto() {
-    var element = $('.messages-container');
-    if (element.scrollTop == (element.scrollHeight - element.offsetHeight)) {
+    var element = document.getElementById('messages-container');
+    console.log(element.scrollTop >= (element.scrollHeight - element.offsetHeight))
+    if (element.scrollTop >= (element.scrollHeight - element.offsetHeight)) {
         return true;
     }
     return false;
 }
-let currentChat = null;
 
 
 
@@ -76,6 +38,28 @@ function addSubforum(name, parentID) {
         }
 
     });
+}
+
+
+function loadNewMessages(chatID) {
+    $.get({
+        url: '/messages?handler=loadnewmessages',
+        data: {
+            chatID : chatID,
+            currentMessagesShown: $(".message-container > div").length
+        },
+        success: function (result) {
+            console.log("fired!");
+            console.log(result)
+            if (scrollAuto() && result.length > 2) {
+
+                $('.message-container').append(result);
+                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
+
+
+            }
+        }
+    })
 }
 
 function addForum(name) {
@@ -117,22 +101,49 @@ function checkUsername() {
     }
 }
 
+function registerSendMessageForm() {
+    $('#reply-message').on('submit', function (e) {
+
+        e.preventDefault();
+        let data = ($(this).serialize());
+        $.post("/messages?handler=SendMessageFromChat", data, function (result) {
+            $('textarea[name="message"]').val("");
+            $('input[name="title"]').val("");
+
+            if (scrollAuto()) {
+
+                $('.message-container').append(result);
+                $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 1000);
+            }
+        })
+    });
+
+}
+
 $(document).ready(function () {
 
 
     $('.open-messages').click(function (e) {
+
+        clearTimeout(chatRefreshTimer);
         currentChat = $(this).data("chat-id");
         $.get("/messages?handler=LoadMessages&id=" + currentChat, function (result) {
             $('.chat-container').html(result);
-            console.log(currentChat);
+            chatRefreshTimer = setInterval(function () {
+                                                        loadNewMessages(currentChat)
+                                                      }, 1000);
             $(".message-container").animate({ scrollTop: $('.message-container').prop("scrollHeight") }, 0);
+            registerSendMessageForm();
         })
     })
 
+   
 
 
     $('#compose-button').click(function () {
         console.log('clicked')
+
+        clearTimeout(chatRefreshTimer);
         $.get({
             url: '/messages?handler=compose',
 
@@ -248,8 +259,6 @@ $('.login-form').on('submit', function (e) {
     e.preventDefault();
     let data = ($(this).serialize());
     console.log(data);
-    let dataw = JSON.stringify(data);
-    console.log(dataw);
     $.post("/ajax?handler=login", data, function (result) {
         console.log(result);
         if (result.success == false) {

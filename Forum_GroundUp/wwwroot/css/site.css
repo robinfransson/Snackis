@@ -1,65 +1,18 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-/*.jstree-default a {
-    white-space: normal !important;
-    height: auto;
-}
 
-.jstree-anchor {
-    height: auto !important;
-}
-
-.jstree-default li > ins {
-    vertical-align: top;
-}
-
-.jstree-leaf {
-    height: auto;
-}
-
-    .jstree-leaf a {
-        height: auto !important;
-    }
-*/
-.chatContainer {
-    font-size: 18px;
-    position: relative;
-    background-color: #90C3D4;
-    width: 300px;
-    height: 600px;
-    overflow-y: scroll;
-    float: right;
-    display: inline-block;
-    margin-left: 8px;
-    border-radius: 2px;
-}
-
-    .chatContainer p {
-        padding: 3px;
-        margin: 0;
-    }
-
-.chatArea {
+#consent {
+    /*height:20rem;*/
     position: fixed;
-    bottom: 0;
+    padding: 10px 10px 0px 10px;
+    bottom: 4rem;
     width: 100%;
-    display: inline-block;
-    margin-top: 100%;
+    /* Height of the footer*/
+    height: 40px;
 }
-
-#chatInput {
-    width: 100%;
-    padding: 6px 12px;
-}
-
-#cSubmitButton {
-    width: 80%;
-    display: inline-block;
-}
-
 footer{
-    height:20rem;
+
 }
 
 .profile-picture{
@@ -80,14 +33,13 @@ footer{
     cursor: pointer;
 }
 
-.message-container {
-}
 .reply-container{
     max-width:50ch!important;
     min-width:50ch!important;
     max-height:5ch;
     overflow-y:scroll;
 }
+
 
 .reply-container::-webkit-scrollbar {
     width: 20px;
@@ -131,7 +83,8 @@ footer{
 
 
 .messages-icon {
-    position: relative;
+    position: sticky;
+    bottom:0;
 }
 
 a {
@@ -163,9 +116,12 @@ a {
 
 .message-container {
     overflow-y: scroll;
-    position:relative;
-    max-height: 75%;
-    min-height: 75%;
+    /*position:relative;*/
+    max-height: 63%;
+    min-height: 63%;
+    max-width:100%;
+    /*margin-left:10%;*/
+    padding-bottom:5%;
 }
 .message-container::-webkit-scrollbar {
         display: none; /* Safari and Chrome */
@@ -175,17 +131,6 @@ a {
     }
 
 
-
-
-    /*.message-table::-webkit-scrollbar {
-        display: none;*/ /* Safari and Chrome */
-    /*}*/
-/*.messages {
-}
-
-    .messages::-webkit-scrollbar {
-        display: none;*/ /* Safari and Chrome */
-    /*}*/
 .box {
     flex-basis: auto;
     margin: 25px auto;
@@ -214,6 +159,11 @@ a {
 }
 .recieved-message{
     max-width:75%;
+}
+
+.sent-message {
+    margin-left:25%;
+    max-width: 75%;
 }
 .sb2:before {
     content: "";

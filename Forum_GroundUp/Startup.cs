@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Westwind.AspNetCore.LiveReload;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+
 namespace SnackisForum
 {
     public class Startup
@@ -89,7 +91,11 @@ namespace SnackisForum
                 .AddDefaultTokenProviders();
 
 
-
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = "/Index";
@@ -120,7 +126,7 @@ namespace SnackisForum
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+            app.UseCookiePolicy();
 
             app.UseEndpoints(endpoints =>
             {

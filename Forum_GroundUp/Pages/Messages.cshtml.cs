@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisForum.Injects;
 namespace SnackisForum.Pages
@@ -15,10 +16,12 @@ namespace SnackisForum.Pages
         #region Readonlies and constuctor
         private readonly SnackisContext _context;
         private readonly UserProfile _profile;
-        public MessagesModel(SnackisContext context, UserProfile userProfile)
+        private readonly ILogger<MessagesModel> _logger;
+        public MessagesModel(SnackisContext context, UserProfile userProfile, ILogger<MessagesModel> logger)
         {
             _context = context;
             _profile = userProfile;
+            _logger = logger;
         }
 
         public List<Chat> Chats { get; set; }
@@ -81,6 +84,7 @@ namespace SnackisForum.Pages
             var currentUser = _context.Users.FirstOrDefault(user => user.UserName == _profile.Username);
             Chat chat = _context.Chats.Where(chat => chat.Participant1 == reciever && chat.Participant2 == currentUser || chat.Participant2 == reciever && chat.Participant1 == currentUser)
                                       .Include(chat => chat.Messages).FirstOrDefault();
+            
             if(chat is null)
             {
                 chat = new()
@@ -102,14 +106,36 @@ namespace SnackisForum.Pages
                 
             });
 
-
             _context.SaveChanges();
-
             return RedirectToPage();
+
         }
 
         #endregion
 
+        #region Send from chat
+
+        public async Task<PartialViewResult> OnPostSendMessageFromChat(string recipient, string title, string message)
+        {
+            var reciever = await _context.Users.FirstOrDefaultAsync(user => user.UserName == recipient);
+            var currentUser = await _context.Users.FirstOrDefaultAsync(user => user.UserName == _profile.Username);
+            Chat chat = await _context.Chats.Where(chat => chat.Participant1 == reciever && chat.Participant2 == currentUser || chat.Participant2 == reciever && chat.Participant1 == currentUser)
+                                      .Include(chat => chat.Messages).FirstOrDefaultAsync();
+
+            chat.Messages.Add(new()
+            {
+                MessageTitle = title,
+                MessageBody = message,
+                DateSent = DateTime.Now,
+                Sender = currentUser.UserName
+
+            });
+
+            await _context.SaveChangesAsync();
+            return await OnGetLoadNewMessages(chat.ID, chat.Messages.Count-1);
+
+        }
+        #endregion
 
         #region Compose
         public PartialViewResult OnGetCompose()
@@ -117,6 +143,16 @@ namespace SnackisForum.Pages
             return Partial("_Compose");
         }
 
+        #endregion
+
+        #region Load new messages
+        public async Task<PartialViewResult> OnGetLoadNewMessages(int chatID, int currentMessagesShown)
+        {
+            var model = await _context.Chats.Where(chat => chat.ID == chatID).Include(chat => chat.Messages).FirstOrDefaultAsync();
+            model.Messages.Where(message => !message.HasBeenViewed && message.Sender != _profile.Username).ToList().ForEach(message => message.HasBeenViewed = true);
+
+            return Partial("_ChatAppendMessages", model.Messages.OrderBy(message => message.DateSent).Skip(currentMessagesShown).ToList());
+        }
         #endregion
     }
 }

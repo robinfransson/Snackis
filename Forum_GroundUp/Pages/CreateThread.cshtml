@@ -17,12 +17,12 @@
                 <input type="hidden" asp-for="Thread.Parent" />
                 <div class="input-group flex-nowrap w-50">
                     <input type="text" class="form-control" placeholder="Titel" 
-                           aria-label="Titel" aria-describedby="addon-wrapping" asp-for="Thread.Title">
+                           aria-label="Titel" aria-describedby="addon-wrapping" asp-for="Thread.Title" required>
                 </div>
 
                 <div class="input-group flex-nowrap mt-2">
 
-                    <textarea class="form-control" placeholder="Text" aria-label="Inläggstext" required minlength="20" maxlength="250"
+                    <textarea required class="form-control" placeholder="Text" aria-label="Inläggstext" required minlength="20" maxlength="250"
                               aria-describedby="addon-wrapping" style="height:10rem;" asp-for="Reply.Body"></textarea>
                 </div>
                 <div class="input-group justify-content-center mt-2">
