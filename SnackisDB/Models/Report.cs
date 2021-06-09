@@ -15,5 +15,6 @@ namespace SnackisDB.Models
         public ForumThread ReportedThread { get; set; }
         public bool ActionTaken { get; set; }
         public bool Removed { get; set; }
+        public DateTime DateReported { get; set; }
     }
 }

@@ -16,25 +16,18 @@ namespace SnackisForum.Pages.Admin
 {
     public class IndexModel : PageModel
     {
-
-
-        private readonly UserManager<SnackisUser> _userManager;
-        private readonly SignInManager<SnackisUser> _signInManager;
         private readonly SnackisContext _context;
-        private readonly ILogger<AjaxModel> _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
 
 
-        public IndexModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
-                        SnackisContext context, ILogger<AjaxModel> logger, RoleManager<IdentityRole> roleManager)
+        public IndexModel(SnackisContext context)
         {
-            _userManager = userManager;
             _context = context;
-            _signInManager = signInManager;
-            _logger = logger;
-            _roleManager = roleManager;
         }
+
+
+
+
         public List<Forum> Forums { get; set; }
         public int Users { get; set; }
         public int Reports { get; set; }

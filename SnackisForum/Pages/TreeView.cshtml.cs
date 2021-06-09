@@ -110,7 +110,7 @@ namespace SnackisForum.Pages
                 {
                     @class = "sub-tree"
                 },
-                icon = "forum",
+                icon = "textsms",
 
             })).ToList();
             forums.AddRange(subforums);
@@ -154,7 +154,7 @@ namespace SnackisForum.Pages
                                                     {
                                                         @class = "reply-tree"
                                                     },
-                                                    icon = "message"
+                                                    icon = "comment"
                                                 })))).ToList();
             forums.AddRange(threads);
             forums.AddRange(replies);
@@ -307,7 +307,8 @@ namespace SnackisForum.Pages
 
             var thread = _context.Threads.Where(thread => thread.ID == threadID).
                 Include(thread => thread.Replies)
-                .Include(thread => thread.Parent).FirstOrDefault();
+                .Include(thread => thread.Parent)
+                .FirstOrDefault();
             thread.Replies.Add(Reply);
             int changes = await _context.SaveChangesAsync();
             _logger.LogInformation(changes + " rows changed");
@@ -345,6 +346,7 @@ namespace SnackisForum.Pages
             var comment = await _context.Replies.Where(reply => reply.ID == realID)
                 .Include(reply => reply.Author)
                 .Include(reply => reply.Thread)
+                .Include(reply => reply.RepliedComment)
                 .FirstOrDefaultAsync();
             return Partial("_ReplyModal", comment);
         }

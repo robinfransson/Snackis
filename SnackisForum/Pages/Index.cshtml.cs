@@ -43,7 +43,12 @@ namespace Chatt_test.Pages
             if (!_context.Database.CanConnect())
             {
 
-                return await InitialSetup();
+               InitialSetup();
+            }
+            bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
+            if (!rolesExist)
+            {
+                await CreateRoles();
             }
             Forums = await _context.Forums.Include(forum => forum.Subforums)
                                     .ThenInclude(sub => sub.Threads)
@@ -55,15 +60,10 @@ namespace Chatt_test.Pages
 
         }
 
-        public async Task<IActionResult> InitialSetup()
+        public  IActionResult InitialSetup()
         {
             _logger.LogInformation("Setting up the database...");
             _context.Database.EnsureCreated();
-            bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
-            if (!rolesExist)
-            {
-                await CreateRoles();
-            }
             _logger.LogInformation("Done!");
             return RedirectToPage();
         }
@@ -83,7 +83,7 @@ namespace Chatt_test.Pages
             foreach (var role in roles)
             {
                 _logger.LogInformation("Created role " + role.Name);
-                await _roleManager.CreateAsync(role);
+                await _roleManager.CreateAsync(role);//
             }
         }
 

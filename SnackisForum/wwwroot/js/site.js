@@ -5,9 +5,35 @@ var token = $('input[name="__RequestVerificationToken"]').val();
 
 var chatRefreshTimer;
 
+function reportSuccess(result) {
+    if (result.succeeded == true) {
+        alert('Rapport mottagen')
+    }
+    else {
+        alert('Något gick fel')
+    }
+}
 
+function report(type, id) {
+        $.post({
+            url: 'ajax?handler=report',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+            },
+            data: {
+                type: type,
+                id: id
+            },
+            success: function (result) {
+                reportSuccess(result)
+            },
+            error: function () {
 
-
+                alert('Något gick fel')
+            }
+        })
+    
+}
 
 
 function getNewMessageCount() {

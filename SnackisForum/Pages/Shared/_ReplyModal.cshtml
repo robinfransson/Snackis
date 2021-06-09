@@ -67,7 +67,22 @@
                         <div class="row text-break w-75 h-auto ps-2" style="height:10rem; min-height: 10rem;">
 
                             @reply.Body
+
                         </div>
+                        @if (userProfile.IsLoggedIn)
+                        {
+                            <div class="d-flex justify-content-end clickable noselect">
+                                <div class="d-block me-3 mb-2">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="material-icons-outlined fs-3" onclick="report('reply', '@reply.ID')">
+                                            report_problem
+                                        </div>
+                                    </div>
+                                    <div>Rapportera</div>
+                                </div>
+                            </div>
+
+                        }
                     </div>
                 </div>
             </div>
@@ -138,10 +153,24 @@ else if (Model is SnackisDB.Models.ForumThread thread)
 
                     </div>
                     <div class="col border-start ps-3">
-                        <div class="row text-break w-75">
+                        <div class="row text-break w-75 h-auto ps-2" style="height:10rem; min-height: 10rem;">
 
                             @thread.Body
                         </div>
+                        @if (userProfile.IsLoggedIn)
+                        {
+                            <div class="d-flex justify-content-end clickable noselect">
+                                <div class="d-block me-3 mb-2">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="material-icons-outlined fs-3" onclick="report('thread', '@thread.ID')">
+                                            report_problem
+                                        </div>
+                                    </div>
+                                    <div>Rapportera</div>
+                                </div>
+                            </div>
+
+                        }
                     </div>
                 </div>
             </div>

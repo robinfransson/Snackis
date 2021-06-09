@@ -3,3 +3,37 @@
 @{
     ViewData["Title"] = "Rapporter";
 }
+
+<div class="row" style="min-height:40rem;">
+    <div class="col">
+        <div class="fs-1">
+            Rapporter
+        </div>
+        <table class="table table-borderless table-hover table-striped table-dark">
+            <thead class="">
+                <tr>
+
+                    <td>
+                        <div class="fs-2"></div>
+
+                    </td>
+                    <td class="d-flex justify-content-end">
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.Reports)
+                {
+
+                    <tr>
+                        <td class="w-50" style="min-width: 50%; max-width: 50%">
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+
+        }
+    </div>
+</div>

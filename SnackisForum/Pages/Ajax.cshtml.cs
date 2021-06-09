@@ -115,6 +115,7 @@ namespace SnackisForum.Pages
                     }
                     catch (Exception e)
                     {
+                        _logger.LogError(e.ToString());
                         return new JsonResult(new { exception = e.ToString(), inner = e.InnerException.ToString() });
                     }
                 }
@@ -333,6 +334,33 @@ namespace SnackisForum.Pages
         }
         #endregion
 
+        #region Report
+        public async Task<JsonResult> OnPostReportAsync(string type, int id)
+        {
+            if (_userProfile.IsLoggedIn)
+            {
+                object reported = type == "reply" ? await _context.Replies.FirstOrDefaultAsync(reply => reply.ID == id) : await _context.Threads.FirstOrDefaultAsync(reply => reply.ID == id);
+
+
+                Report report = new()
+                {
+                    Reporter = _userProfile.CurrentUser,
+                    ActionTaken = false,
+                    Removed = false,
+                    ReportedReply = reported is ForumReply ? reported as ForumReply : null,
+                    ReportedThread = reported is ForumThread ? reported as ForumThread : null,
+                    DateReported = DateTime.Now
+                };
+
+                _context.Reports.Add(report);
+                int rowsChanged = await _context.SaveChangesAsync();
+
+                return new(new { succeeded = rowsChanged == 1 });
+            }
+
+            return new(new { succeeded = false });
+        }
+        #endregion
 
 
     }
