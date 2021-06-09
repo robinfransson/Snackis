@@ -1,0 +1,108 @@
+﻿@page "{id:int?}"
+@model SnackisForum.Pages.ThreadModel
+@inject SnackisContext context;
+@inject SnackisForum.Injects.UserProfile userProfile;
+@using SnackisDB.Models;
+@{
+
+    int postNumber = 1;
+    ViewData["Title"] = Model.Thread.Title;
+    if (ViewData["Ajax"] != null)
+    {
+        Layout = null;
+    }
+}
+<div class="container mt-3 pb-2 rounded bg-dark h-100 text-white mb-5">
+
+    <partial name="_CurrentLocation" model="Model.Thread" />
+    <div class="text-center row border-bottom border-secondary">
+        <div class="thread-title">
+            <div class="h3 pt-1 flex-column">@Model.Thread.Title</div>
+            <div class="py-1 flex-column">av @Model.Thread.CreatedBy.UserName @Model.Thread.CreatedOn.ToString("yyyy/MM/dd, HH:MM")</div>
+
+        </div>
+
+    </div>
+    @foreach (var reply in Model.Thread.Replies)
+    {
+        var user = reply.Author;
+        var parentComment = reply.ReplyText;
+        bool hasParentComment = parentComment != null;
+        string datePosted = "";
+        datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
+        <div class="row border-bottom border-secondary " id="reply-@reply.ID">
+            <div class="col-1 pt-2" style="width:8rem;">
+
+                <img src="@user.ProfileImagePath" class="profile-picture" />
+
+                @user.UserName
+                <div style="font-size:75%">Gick med</div>
+                <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
+
+            </div>
+
+            <div class="col border-start border-secondary">
+                <div class="row text-break text-wrap ">
+                    <div class="border-bottom border-secondary w-100">
+                        <div class="row w-100">
+                            <div class="col">@reply.DaysAgo()</div>
+                            <div class="col text-end">#@postNumber</div>
+                        </div>
+                    </div>
+                    @*@if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
+                        {
+
+
+                        <div class="border-bottom fw-bold ps-3">@reply.ReplyTitle</div>
+                            <div class="font-monospace" style="font-size:75%">@reply.DaysAgo()</div>
+                        }*@
+                    @if (hasParentComment)
+                    {
+                        <div class="border rounded ms-3 my-2 me-0 border-secondary w-75 text-break text-wrap reply-container">
+                            @*@if (!string.IsNullOrWhiteSpace(parentComment.ReplyTitle))
+                                {
+                                    <b>@parentComment</b>
+                                }*@
+                            <div class="mb-1">@parentComment</div>
+                            <div>av @reply.ReplyTo.UserName @reply.RepliedComment.DatePosted.ToString("yyyy/MM/dd HH:MM")</div>
+                        </div>
+                    }
+                    <div class="message-container text-break my-3" style="max-width:60rem;">
+                        @reply.Body
+                    </div>
+                    @if (Model.IsLoggedIn)
+
+                    {
+                        <div class="border-top border-secondary ps-3">
+                            <a href="">Svara</a>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+        postNumber++;
+    }
+    @if (Model.IsLoggedIn)
+    {
+        <div class="new-post">
+            <form method="post" class="">
+                @Html.AntiForgeryToken()
+                <div class="d-flex justify-content-center">
+                    <div class="mb-3 w-75 justify-content-center">
+                        <label for="exampleFormControlTextarea1" class="form-label ">Nytt inlägg</label>
+                        <textarea class="form-control bg-secondary border-secondary text-white"
+                                  id="exampleFormControlTextarea1" rows="3" asp-for="Reply.Body">
+                    </textarea>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Reply.ReplyTo" />
+                <div class="fw-bold text-center">Svarar som @userProfile.Username</div>
+
+                <button type="submit" class="btn btn-outline-secondary btn-secondary text-white">Skicka</button>
+            </form>
+        </div>
+    }
+</div>
+
+<footer style="height:10rem"></footer>

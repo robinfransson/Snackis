@@ -1,0 +1,65 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+@inject SnackisForum.Injects.UserProfile userProfile;
+
+<div class="dropdown-menu dropdown-menu-end" id="">
+    <form class="px-4 py-3 login-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="exampleDropdownFormEmail1">Användarnamn</label>
+            <input type="text" class="form-control" name="username" placeholder="Användarnamn" required>
+        </div>
+        <div class="form-group">
+            <label for="exampleDropdownFormPassword1">Lösenord</label>
+            <input type="password" class="form-control" name="password" placeholder="Lösenord" required>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+            <label class="form-check-label" for="dropdownCheck">
+                Kom ihåg mig
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Logga in</button>
+
+    </form>
+    <div class="dropdown-divider"></div>
+    <div class="dropdown-item" onclick="$('#registerModal').appendTo('body').modal('show');">Registrera ny användare</div>
+
+
+    <a href="/TreeView" style="text-decoration:none;"><div class="dropdown-item">Träd</div></a>
+    <a href="/api" style="text-decoration:none;"><div class="dropdown-item">Api</div></a>
+
+</div>
+<!-- Modal -->
+<div class="modal fade " id="registerModal" tabindex="-5" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Skapa ny användare</h5>
+                <button type="button" class="close rounded" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="registerForm">
+                <div class="modal-body">
+                    <label for="email" class="form-label">Epost</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <label for="username" class="form-label">Användarnamn</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <label for="email" class="form-label">Lösenord</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    @Html.AntiForgeryToken();
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="btn btn-primary">Registrera</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

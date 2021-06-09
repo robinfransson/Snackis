@@ -1,0 +1,77 @@
+﻿@page
+@model SnackisForum.Pages.MessagesModel
+@using SnackisForum.Injects;
+@inject SnackisDB.Models.SnackisContext context;
+@{
+}
+@inject UserProfile userProfile;
+<script src="~/js/messaging.js"></script>
+<div class="container-fluid rounded bg-secondary " >
+    <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="max-height:50rem; height:50rem">
+        <div class="row">
+            <div class="col-2 "style="max-height:30rem!important">
+                <div class="row d-flex justify-content-center mx-auto">
+                    <button class="btn btn-dark btn-outline-secondary mt-5 mb-4" id="compose-button">Skapa nytt meddelande</button>
+                </div>
+                <table class="table table-dark table-hover table-striped table-bordered pt-2 ">
+                    <thead>
+                        <tr>
+                            <td>
+                                Inkorg
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="clickable message-table " id="message-table">
+                        @if (Model.Chats != null && Model.Chats.Any())
+                        {
+                            var newList = Model.Chats.Select(chat => new
+                            {
+                                chat,
+                                lastMessage = chat.Messages.OrderByDescending(message => message.DateSent).FirstOrDefault()
+                            }).OrderByDescending(obj => obj.lastMessage.DateSent).ToList();
+
+                            @foreach (var obj in newList)
+                            {
+                                var chattingWith = obj.chat.Participant1 == userProfile.CurrentUser ? obj.chat.Participant2 : obj.chat.Participant1;
+                                
+                                int newMessages = obj.chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != userProfile.Username);
+
+                                <tr>
+                                    <td class="open-messages" data-chat-id="@obj.chat.ID" data-new-messages="@newMessages">
+                                        <div>@chattingWith.UserName</div>
+                                        @if (newMessages > 0)
+                                        {
+                                            string message = newMessages == 1 ? "nytt meddelande" : "nya meddelanden";
+                                            <div>@newMessages @message</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Inga nya meddelanden</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>
+                                    Inga nya meddelanden
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col mt-5 " id="chatArea" style="">
+                <div class="row border mb-3 pb-3 me-3">
+                    <div class="container py-1 d-block" style="height:40rem;">
+                        <div class="chat-container h-100 d-flex align-content-end ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

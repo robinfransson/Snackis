@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnackisDB", "SnackisDB\SnackisDB.csproj", "{A026401D-CCF1-48E0-A486-C56B1D48DCEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnackisForum", "Forum_GroundUp\SnackisForum.csproj", "{8F2BC432-69B8-41A6-9CF1-1B222DBD2474}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnackisForum", "SnackisForum\SnackisForum.csproj", "{3C71CFF5-847A-4F94-A343-000F002974A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{A026401D-CCF1-48E0-A486-C56B1D48DCEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A026401D-CCF1-48E0-A486-C56B1D48DCEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A026401D-CCF1-48E0-A486-C56B1D48DCEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F2BC432-69B8-41A6-9CF1-1B222DBD2474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F2BC432-69B8-41A6-9CF1-1B222DBD2474}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F2BC432-69B8-41A6-9CF1-1B222DBD2474}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F2BC432-69B8-41A6-9CF1-1B222DBD2474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C71CFF5-847A-4F94-A343-000F002974A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C71CFF5-847A-4F94-A343-000F002974A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C71CFF5-847A-4F94-A343-000F002974A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C71CFF5-847A-4F94-A343-000F002974A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

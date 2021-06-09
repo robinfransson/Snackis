@@ -1,0 +1,43 @@
+﻿@using SnackisDB.Models;
+@using SnackisForum.Injects;
+@inject UserProfile userProfile;  
+@model List<Chat>
+@{ 
+    Layout = null;
+}
+
+
+
+
+@if (Model != null && Model.Any())
+{
+
+    var newList = Model.Select(chat => new
+    {
+        chat,
+        lastMessage = chat.Messages.OrderByDescending(message => message.DateSent).FirstOrDefault()
+    }).OrderByDescending(obj => obj.lastMessage.DateSent).ToList();
+
+    @foreach (var obj in newList)
+    {
+        var chattingWith = obj.chat.Participant1 == userProfile.CurrentUser ? obj.chat.Participant2 : obj.chat.Participant1;
+
+        int newMessages = obj.chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != userProfile.Username);
+
+        <tr>
+            <td class="open-messages" data-chat-id="@obj.chat.ID" data-new-messages="@newMessages">
+                <div>@chattingWith.UserName</div>
+                @if (newMessages > 0)
+                {
+                    string message = newMessages == 1 ? "nytt meddelande" : "nya meddelanden";
+                    <div>@newMessages @message</div>
+                }
+                else
+                {
+                    <div>Inga nya meddelanden</div>
+                }
+            </td>
+        </tr>
+    }
+
+}

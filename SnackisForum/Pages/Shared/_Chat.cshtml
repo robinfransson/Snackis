@@ -1,0 +1,65 @@
+﻿@using SnackisDB.Models;
+@inject SnackisForum.Injects.UserProfile userProfile;
+@model Chat
+
+
+@{
+
+    string chattingWith = Model.Participant1 == userProfile.CurrentUser ? Model.Participant2.UserName : Model.Participant1.UserName;
+}
+
+<div class="container pt-1 pb-5">
+    <div class=" message-container w-100 " id="messages-container">
+        @foreach (var message in Model.Messages.OrderBy(message => message.DateSent))
+        {
+            bool isReciever = message.Sender != userProfile.Username;
+            if (isReciever)
+            {
+                <div class="flex-col border border-secondary text-white bg-dark mt-2 d-block justify-content-start recieved-message">
+
+                    <div class="fw-bold border-bottom pb-1">@message.MessageTitle (@message.DateSent.ToShortDateString(), @message.DateSent.ToShortTimeString())</div>
+                    <div class="text-break pt-1 pb-1">@message.MessageBody</div>
+
+                    <div class="border-top border-dark">Från @message.Sender</div>
+                </div>
+            }
+            else
+            {
+                <div class="flex-col justify-content-end  border border-secondary text-white bg-dark mt-2 sent-message">
+
+                    <div class="fw-bold border-bottom pb-1">@message.MessageTitle (@message.DateSent.ToShortDateString(), @message.DateSent.ToShortTimeString())</div>
+                    <div class="text-break pt-1 pb-1">@message.MessageBody</div>
+
+                    <div class="border-top border-dark">Skickat av dig</div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="row d-block border-top border-2 pb-2" style="">
+        <form class="pt-3 w-100" id="reply-message" method="post">
+            <div class="form-group">
+
+                <div class="w-100 pb-2">
+                    <input type="text" name="title" placeholder="Titel" class="w-100 bg-dark text-white form-control" required/>
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="">
+                    <textarea name="message" placeholder="Meddelande" class="w-100 bg-dark text-white form-control" rows="5" required></textarea>
+                </div>
+
+                <div class="">
+                    <input type="hidden" value="@chattingWith" name="recipient"/>
+                </div>
+            </div>
+
+            <div class="d-flex align-content-end justify-content-center w-100 pt-2">
+                <button type="submit" class="btn btn-success">Svara</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+

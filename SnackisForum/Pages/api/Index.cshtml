@@ -1,0 +1,24 @@
+﻿@page
+@model SnackisForum.Pages.api.IndexModel
+@{
+    ViewData["Title"] = "API";
+}
+<div class="container bg-white border-2 border border-dark mt-3 pb-3">
+
+    <div class="font-monospace mt-3">
+        För all data:<br />
+        HTTP GET: /api/forum/all
+    </div>
+    <div class="font-monospace mt-3">
+        För subforum, trådar och inlägg<br />
+        HTTP GET: /api/forum/{namn}
+    </div>
+    <div class="font-monospace mt-3">
+        För trådar och inlägg i ett subforum: <br />
+        HTTP GET: /api/forum/sub/{namn}
+    </div>
+    <div class="font-monospace mt-3">
+        För en specifik tråd och svar: <br />
+        HTTP GET: /api/trad/{id}
+    </div>
+</div>
