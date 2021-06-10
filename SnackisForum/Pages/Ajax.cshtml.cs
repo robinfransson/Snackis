@@ -127,11 +127,12 @@ namespace SnackisForum.Pages
 
 
         #region Login
-        public async Task<JsonResult> OnPostLoginAsync(string username, string password, bool remember)
+        public async Task<JsonResult> OnPostLoginAsync(string username, string password, string remember)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(username, password, remember, false);
+                //är remembersträngen null är inte kom ihåg mig checkad
+                var result = await _signInManager.PasswordSignInAsync(username, password, !string.IsNullOrEmpty(remember), false);
 
                 if (result.Succeeded)
                 {

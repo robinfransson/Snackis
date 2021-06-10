@@ -35,29 +35,32 @@ namespace SnackisForum
             {
                 services.AddAuthorization(options =>
                 {
-                    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                    //options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 });
                 services.AddRazorPages(options =>
                 {
-                    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+                    //options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
                 }
                 ).AddRazorRuntimeCompilation();
-                services.AddLiveReload();
+                //services.AddLiveReload();
+                Console.WriteLine("Vilken sträng ska användas?");
+                string connectionString = Console.ReadLine();
                 services.AddDbContext<SnackisContext>(options =>
                 {
-                    options.UseSqlServer(Configuration.GetConnectionString("local"));
+                    options.UseSqlServer(Configuration.GetConnectionString(connectionString));
                 });
             }
             else
             {
                 services.AddAuthorization(options =>
                 {
-                    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                    //options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 });
                 services.AddRazorPages(options =>
                 {
-                    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+                    //options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
                 });
+                
                 services.AddDbContext<SnackisContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("azure"));
@@ -111,7 +114,7 @@ namespace SnackisForum
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseLiveReload();
+                //app.UseLiveReload();
             }
             else
             {

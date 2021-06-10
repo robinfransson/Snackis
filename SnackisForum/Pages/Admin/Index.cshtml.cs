@@ -31,12 +31,16 @@ namespace SnackisForum.Pages.Admin
         public List<Forum> Forums { get; set; }
         public int Users { get; set; }
         public int Reports { get; set; }
-        public IActionResult OnGet()
+        public IActionResult OnGet([FromServices] UserProfile profile)
         {
+            if(profile.IsAdmin)
+            { 
             Forums = _context.Forums.Include(forum => forum.Subforums).ThenInclude(sub => sub.Threads).ThenInclude(thread => thread.Replies).ToList();
             Reports = _context.Reports.Count(report => !report.ActionTaken);
             Users = _context.Users.Count();
             return Page();
+            }
+            return RedirectToPage("../Index");
 
         }
     }

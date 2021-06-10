@@ -3,12 +3,13 @@
 
 @inject SnackisForum.Injects.UserProfile profile;
 @{
+    ViewData["Title"] = "Profil";
 }
 
 <div class="container-fluid rounded bg-secondary">
     <div class="container w-75 bg-dark text-light rounded mt-3 pb-1" style="height:30rem">
-        @if(profile.IsLoggedIn)
-            {
+        @if (profile.IsLoggedIn)
+        {
 
         <div class="row">
             <h1 class="pt-3 ps-5">@profile.Username</h1>

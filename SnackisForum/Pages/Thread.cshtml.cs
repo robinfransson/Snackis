@@ -40,6 +40,7 @@ namespace SnackisForum.Pages
         public IActionResult OnGet(int id)
         {
             Thread = _context.Threads.Where(thread => thread.ID == id)?
+                                        .Include(thread => thread.CreatedBy)
                                         .Include(thread => thread.Replies)
                                             .ThenInclude(replies => replies.Author)
                                             .Include(thread => thread.Parent)

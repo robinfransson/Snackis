@@ -30,17 +30,26 @@ namespace SnackisForum.Pages.Admin
 
 
         public List<Report> Reports { get; set; }
+        public int Users { get; set; }
 
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            Reports = _context.Reports.Include(report => report.Reporter)
-                                      .Include(report => report.ReportedReply)
-                                        .ThenInclude(reply => reply.Author)
-                                      .Include(report => report.ReportedThread)
-                                        .ThenInclude(thread => thread.CreatedBy)
-                                      .OrderByDescending(report => report.DateReported)
-                                      .OrderByDescending(report => !report.ActionTaken).ToList();
+            if(_profile.IsAdmin)
+            {
+
+                Reports = _context.Reports.Include(report => report.Reporter)
+                                          .Include(report => report.ReportedReply)
+                                            .ThenInclude(reply => reply.Author)
+                                          .Include(report => report.ReportedThread)
+                                            .ThenInclude(thread => thread.CreatedBy)
+                                          .OrderByDescending(report => report.DateReported)
+                                          .OrderByDescending(report => !report.ActionTaken).ToList();
+                Users = _context.Users.Count();
+
+                return Page();
+            }
+            return RedirectToPage("../Index");
         }
 
 

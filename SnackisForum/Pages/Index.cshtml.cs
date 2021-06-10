@@ -40,11 +40,13 @@ namespace Chatt_test.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (!_context.Database.CanConnect())
+            bool canConnect = await _context.Database.CanConnectAsync();
+            if (canConnect && !_context.Roles.Any())
             {
 
                InitialSetup();
             }
+
             bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
             if (!rolesExist)
             {

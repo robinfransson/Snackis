@@ -262,10 +262,10 @@ html {
     min-height: 100%;
 }
 
-.subforum:nth-child(odd) {
+/*.subforum:nth-child(odd) {
     background-color:;
 }
 
 .subforum:nth-child(even) {
     background-color: lightblue;
-}
+}*/

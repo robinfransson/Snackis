@@ -1,12 +1,12 @@
 ﻿@page
 @model SnackisForum.Pages.Admin.ReportsModel
 @{
-    ViewData["Title"] = "Rapporter";
+    ViewData["Title"] = "Anmälningar";
     Layout = "_AdminLayout";
 }
 
 <div class="row" style="min-height:40rem;">
-    <div class="col-2">
+    <div class="col-2 mt-2">
         <table class="table table-dark table-hover table-striped table-bordered mt-2 ">
             <thead>
                 <tr>
@@ -31,9 +31,18 @@
                     <td class="">
 
                         <a href="@Url.Content("~/Admin/Reports")" style="text-decoration:none;">
-                            <div class="fs-5">Rapporter</div>
+                            <div class="fs-5">Anmälningar</div>
                             <div class="fs-6">Antal nya: @Model.Reports.Count(report => !report.ActionTaken)</div>
                         </a>
+                    </td>
+                </tr>
+
+                <tr>
+
+                    <td>
+                        <div class="fs-5">Antal användare:</div>
+                        <div class="fs-6">@Model.Users</div>
+
                     </td>
                 </tr>
             </tbody>
@@ -49,7 +58,7 @@
                 <tr>
 
                     <td>
-                        Rapportör
+                        Anmälare
 
                     </td>
                     <td class="">

@@ -2,7 +2,8 @@
 @model SnackisForum.Pages.MessagesModel
 @using SnackisForum.Injects;
 @inject SnackisDB.Models.SnackisContext context;
-@{
+@{     
+    ViewData["Title"] = "Meddelanden";
 }
 @inject UserProfile userProfile;
 <script src="~/js/messaging.js"></script>

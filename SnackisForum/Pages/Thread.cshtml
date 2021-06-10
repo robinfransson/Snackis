@@ -32,13 +32,19 @@
         datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
         <div class="row border-bottom border-secondary " id="reply-@reply.ID">
             <div class="col-1 pt-2" style="width:8rem;">
-
+                @if(user != null)
+                {
                 <img src="@user.ProfileImagePath" class="profile-picture" />
 
                 @user.UserName
                 <div style="font-size:75%">Gick med</div>
                 <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
-
+                
+                }
+                else
+                {
+            <div>Anonym</div>
+                }
             </div>
 
             <div class="col border-start border-secondary">
