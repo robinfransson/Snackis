@@ -2,9 +2,44 @@
 @model SnackisForum.Pages.Admin.ReportsModel
 @{
     ViewData["Title"] = "Rapporter";
+    Layout = "_AdminLayout";
 }
 
 <div class="row" style="min-height:40rem;">
+    <div class="col-2">
+        <table class="table table-dark table-hover table-striped table-bordered mt-2 ">
+            <thead>
+                <tr>
+                    <td>
+                        Meny
+                    </td>
+                </tr>
+            </thead>
+            <tbody class="clickable">
+
+
+                <tr>
+
+                    <td class="">
+
+                        <a href="@Url.Content("~/Admin/")" style="text-decoration:none;">
+                            <div class="fs-5">Adminpanel</div>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">
+
+                        <a href="@Url.Content("~/Admin/Reports")" style="text-decoration:none;">
+                            <div class="fs-5">Rapporter</div>
+                            <div class="fs-6">Antal nya: @Model.Reports.Count(report => !report.ActionTaken)</div>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="col">
         <div class="fs-1">
             Rapporter
@@ -14,26 +49,132 @@
                 <tr>
 
                     <td>
-                        <div class="fs-2"></div>
+                        Rapportör
 
                     </td>
-                    <td class="d-flex justify-content-end">
+                    <td class="">
+                        Datum
+                    </td>
+
+                    <td class="">
+                        Tråd/Inlägg
+                    </td>
+                    <td>
+                        Titel
+                    </td>
+                    <td class="">
+                        Info
+                    </td>
+                    <td>
+                        Hanterad
+                    </td>
+
+                    <td>
+                        Borttagen
+                    </td>
+
+                    <td>
+                        Ta bort
                     </td>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var report in Model.Reports)
                 {
+                    bool reportIsThread = report.ReportedReply is null;
+                <tr>
+                    <td class="" style="">
+                        @report.Reporter.UserName
+                    </td>
+                    <td class="" style="">
+                        @report.DateReported.ToString("dd/MM/yy HH:mm")
+                    </td>
 
-                    <tr>
-                        <td class="w-50" style="min-width: 50%; max-width: 50%">
-                        </td>
-                    </tr>
+                    <td>
+                        @{
+                            @Html.Raw(reportIsThread ? $"Tråd" : $"Inlägg")
+                        }
+                    </td>
+                    <td>
+                        @{
+                            @Html.Raw(reportIsThread ? $"{report.ReportedThread.Title}" : $"{report.ReportedReply.Title}")}
+                    </td>
+                    <td>
 
-                }
+                        @if (reportIsThread)
+                        {
+
+                            <a href="@Url.Content($"~/treeview?nodeid=thread-{report.ReportedThread.ID}")" style="text-decoration:none;">
+                                <div class=" material-icons-outlined noselect">
+                                    info
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Content($"~/treeview?nodeid=reply-{report.ReportedReply.ID}")" style="text-decoration:none;">
+                                <div class=" material-icons-outlined noselect">
+                                    info
+                                </div>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (report.ActionTaken)
+                        {
+                            <span class="material-icons-outlined text-success noselect">
+                                done
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="material-icons-outlined text-danger noselect">
+                                close
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        @if (report.Removed)
+                        {
+                            <span class="material-icons-outlined text-success noselect">
+                                done
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="material-icons-outlined text-danger noselect">
+                                close
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!report.ActionTaken)
+                {
+
+                        <div class="d-flex">
+                            @{
+                                string type = reportIsThread ? "thread" : "reply";
+                                int reportedID = reportIsThread ? report.ReportedThread.ID : report.ReportedReply.ID;
+                            }
+                            <div class="material-icons-outlined text-success noselect clickable me-2 reported-click" data-report-type="@type" data-id="@reportedID" data-take-action="true" data-report-id="@report.ID">
+                                done
+                            </div>
+
+
+                            <div class="material-icons-outlined text-danger noselect clickable me-2 reported-click" data-report-type="@type" data-id="@reportedID" data-take-action="false" data-report-id="@report.ID">
+                                close
+                            </div>
+                        </div>
+
+                                }
+                    </td>
+                </tr>
+
+                                }
             </tbody>
         </table>
 
-        }
+
     </div>
 </div>

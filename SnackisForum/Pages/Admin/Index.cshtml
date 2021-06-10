@@ -20,9 +20,21 @@
 
 
                 <tr>
-                    <td class="open-reports">
-                        <div class="fs-5">Rapporter</div>
-                        <div class="fs-6">Antal nya: @Model.Reports</div>
+
+                    <td class="">
+
+                        <a href="@Url.Content("~/Admin/")" style="text-decoration:none;">
+                            <div class="fs-5">Adminpanel</div>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">
+
+                        <a href="@Url.Content("~/Admin/Reports")" style="text-decoration:none">
+                            <div class="fs-5">Rapporter</div>
+                            <div class="fs-6">Antal nya: @Model.Reports</div>
+                        </a>
                     </td>
                 </tr>
             </tbody>

@@ -48,8 +48,6 @@ function getNewMessageCount() {
 
 
 
-
-
 function addSubforum(name, parentID) {
     $.post({
         data: { subName: name, parent: parentID },
@@ -81,7 +79,25 @@ function addForum(name) {
 
 
 $(document).ready(function () {
+    $('.reported-click').click(function () {
+        console.log('action taken!')
+        $.post({
+            url: '?handler=takeaction',
+            data: {
+                remove: $(this).data('take-action'),
+                type: $(this).data('report-type'),
+                id: parseInt($(this).data('id')),
+                reportID: parseInt($(this).data('report-id'))
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+            },
+            success: function () {
+                location.replace(location.href)
 
+            }
+        })
+    })
 
     $("#makeadmin").on('click', function (e) {
         e.preventDefault();
