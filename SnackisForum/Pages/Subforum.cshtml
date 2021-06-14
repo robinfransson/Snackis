@@ -75,31 +75,33 @@ else
                                     {
 
 
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="font-monospace text-end" style="font-size:75%;"> @obj.postDate.DaysAgo()</div>
-                                                <div class="font-monospace text-end" style="font-size:75%;">av @thread.CreatedBy.UserName</div>
-                                            </div>
-                                            <div class="col me-4" style="max-width:3rem">
-                                                <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="" data-thread-id="@thread.ID">
-                                                    arrow_right
-                                                </span>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="font-monospace text-end" style="font-size:75%;"> @obj.postDate.DaysAgo()</div>
+                                            <div class="font-monospace text-end" style="font-size:75%;">av @thread.CreatedBy.UserName</div>
                                         </div>
+                                        <div class="col me-4" style="max-width:3rem">
+                                            <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="" data-thread-id="@thread.ID">
+                                                arrow_right
+                                            </span>
+                                        </div>
+                                    </div>
                                     }
                                     else
                                     {
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DatePosted.DaysAgo()</div>
-                                                <div class="font-monospace text-end" style="font-size:75%;">av @lastReply.Author.UserName</div>
-                                            </div>
-                                            <div class="col me-4" style="max-width:3rem">
-                                                <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="@lastReply.ID" data-thread-id="@thread.ID">
-                                                    arrow_right
-                                                </span>
-                                            </div>
+                                    string poster = lastReply.Author == null ? "Anonym" : lastReply.Author.UserName;
+                                    
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DatePosted.DaysAgo()</div>
+                                            <div class="font-monospace text-end" style="font-size:75%;">av @poster</div>
                                         </div>
+                                        <div class="col me-4" style="max-width:3rem">
+                                            <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="@lastReply.ID" data-thread-id="@thread.ID">
+                                                arrow_right
+                                            </span>
+                                        </div>
+                                    </div>
                                     }
                                 </td>
                             </tr>

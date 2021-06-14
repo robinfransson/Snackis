@@ -138,7 +138,7 @@ else if (Model is SnackisDB.Models.ForumThread thread)
                     </div>
                 </div>
                 <div class="row">
-                    @thread.CreatedOn.ToShortDateString(), @thread.CreatedOn.ToShortTimeString()
+                    @thread.CreatedOn.DaysAgo()
                 </div>
             </div>
         </div>

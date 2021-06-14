@@ -69,13 +69,14 @@ namespace SnackisForum.Pages
 
 
 
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int id, [FromServices] UserProfile profile)
         {
-            Reply.Author = await _userManager.GetUserAsync(User);
+            Reply.Author = profile.IsLoggedIn ? profile.CurrentUser : null;
             Reply.DatePosted = DateTime.Now;
 
-            Thread = _context.Threads.Include(thread => thread.Replies)
-                .Include(thread => thread.Parent).FirstOrDefault(thread => thread.ID == id);
+            Thread = _context.Threads.Where(thread => thread.ID == id)
+                                     .Include(thread => thread.Replies)
+                                     .FirstOrDefault();
             Thread.Replies.Add(Reply);
             int changes = await _context.SaveChangesAsync();
             _logger.LogInformation(changes + " rows changed");

@@ -91,7 +91,7 @@
                     <div class="row text-break text-wrap ">
                         <div class="border-bottom border-secondary w-100">
                             <div class="row w-100">
-                                <div class="col">@reply.DatePosted.DaysAgo()</div>
+                                <div class="col"><b class="me-4">@reply.Title</b>@reply.DatePosted.DaysAgo()</div>
                                 <div class="col text-end">#@postNumber</div>
                             </div>
                         </div>
@@ -130,26 +130,30 @@
             postNumber++;
         }
     }
-    @if (Model.IsLoggedIn)
-    {
+    @{
+        string currentUser = userProfile.IsLoggedIn ? userProfile.Username : "Anonym";
+    }
         <div class="new-post">
             <form method="post" class="">
                 @Html.AntiForgeryToken()
                 <div class="d-flex justify-content-center">
                     <div class="mb-3 w-75 justify-content-center">
-                        <label for="exampleFormControlTextarea1" class="form-label ">Nytt inlägg</label>
+                        <div class="form-label ">Nytt inlägg</div>
+                        <div class="h5">Titel</div>
+                        <input type="text" asp-for="Reply.Title" class="form-control bg-secondary border-secondary text-white" required />
+                        <div class="h5">Text</div>
                         <textarea class="form-control bg-secondary border-secondary text-white"
-                                  id="exampleFormControlTextarea1" rows="3" asp-for="Reply.Body">
+                                  id="exampleFormControlTextarea1" rows="3" asp-for="Reply.Body" required>
                     </textarea>
                     </div>
                 </div>
-                <input type="hidden" asp-for="Reply.ReplyTo" />
-                <div class="fw-bold text-center">Svarar som @userProfile.Username</div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-outline-secondary btn-secondary text-white w-25">Skicka</button>
+                </div>
+                <div class="fw-bold text-center">Svarar som @currentUser</div>
 
-                <button type="submit" class="btn btn-outline-secondary btn-secondary text-white">Skicka</button>
             </form>
         </div>
-    }
 </div>
 
 <footer style="height:10rem"></footer>
