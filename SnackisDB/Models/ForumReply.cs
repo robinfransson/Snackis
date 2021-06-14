@@ -25,41 +25,41 @@ namespace SnackisDB.Models
         public string ReplyText { get; set; }
         public DateTime DatePosted { get; set; }
 
-        public string DaysAgo()
-        {
+        //public string DaysAgo()
+        //{
 
-            string hours = this.DatePosted.Hour.ToString();
-            string minutes = this.DatePosted.Minute.ToString();
-            var now = DateTime.Now;
-            var elasped = now.Subtract(DatePosted);
-            double daysAgo = elasped.TotalDays;
+        //    string hours = this.DatePosted.Hour.ToString();
+        //    string minutes = this.DatePosted.Minute.ToString();
+        //    var now = DateTime.Now;
+        //    var elasped = now.Subtract(DatePosted);
+        //    double daysAgo = elasped.TotalDays;
 
-            var numbersToAddZeroTo = Enumerable.Range(1, 10);
-            if (numbersToAddZeroTo.Contains(DatePosted.Hour))
-            {
-                hours = "0" + hours;
-            }
-            if (numbersToAddZeroTo.Contains(DatePosted.Minute))
-            {
-                minutes = "0" + minutes;
-            }
+        //    var numbersToAddZeroTo = Enumerable.Range(1, 10);
+        //    if (numbersToAddZeroTo.Contains(DatePosted.Hour))
+        //    {
+        //        hours = "0" + hours;
+        //    }
+        //    if (numbersToAddZeroTo.Contains(DatePosted.Minute))
+        //    {
+        //        minutes = "0" + minutes;
+        //    }
 
-            if (daysAgo <= 1 && now.ToShortDateString() == this.DatePosted.ToShortDateString())
-            {
-                return $"idag {hours}:{minutes}";
-            }
-            else if (daysAgo <= 1)
-            {
-                return $"igår {hours}:{minutes}";
-            }
-            else if (daysAgo < 8)
-            {
-                return $"för {Math.Round(daysAgo, 0)} dagar sedan kl {hours}:{minutes}";
-            }
-            else
-            {
-                return $"{DatePosted.ToShortTimeString()} {hours}:{minutes}";
-            }
-        }
+        //    if (daysAgo <= 1 && now.ToShortDateString() == this.DatePosted.ToShortDateString())
+        //    {
+        //        return $"idag {hours}:{minutes}";
+        //    }
+        //    else if (daysAgo <= 1)
+        //    {
+        //        return $"igår {hours}:{minutes}";
+        //    }
+        //    else if (daysAgo < 8)
+        //    {
+        //        return $"för {Math.Round(daysAgo, 0)} dagar sedan kl {hours}:{minutes}";
+        //    }
+        //    else
+        //    {
+        //        return $"{DatePosted.ToShortTimeString()} {hours}:{minutes}";
+        //    }
+        //}
     }
 }

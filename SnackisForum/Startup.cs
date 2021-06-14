@@ -3,17 +3,13 @@ using SnackisDB.Models.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Westwind.AspNetCore.LiveReload;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using SnackisForum.Injects;
 
 namespace SnackisForum
 {
@@ -25,6 +21,7 @@ namespace SnackisForum
             CurrentEnvironment = env;
         }
 
+        public IServiceProvider ServiceProvider { get; }
         public IConfiguration Configuration { get; }
         private IWebHostEnvironment CurrentEnvironment { get; set; }
 
@@ -33,17 +30,7 @@ namespace SnackisForum
         {
             if(CurrentEnvironment.IsDevelopment())
             {
-                services.AddAuthorization(options =>
-                {
-                    //options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-                });
-                services.AddRazorPages(options =>
-                {
-                    //options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
-                }
-                ).AddRazorRuntimeCompilation();
-                //services.AddLiveReload();
-                Console.WriteLine("Vilken sträng ska användas?");
+                Console.WriteLine("Vilken anslutningssträng ska användas? 'local' eller 'azure'");
                 string connectionString = Console.ReadLine();
                 services.AddDbContext<SnackisContext>(options =>
                 {
@@ -51,21 +38,15 @@ namespace SnackisForum
                 });
             }
             else
-            {
-                services.AddAuthorization(options =>
-                {
-                    //options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-                });
-                services.AddRazorPages(options =>
-                {
-                    //options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
-                });
-                
+            {   
                 services.AddDbContext<SnackisContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("azure"));
                 });
             }
+
+            services.AddAuthorization();
+            services.AddRazorPages();
             services.AddHttpContextAccessor();
 
             services.AddScoped<SnackisForum.Injects.UserProfile>();
@@ -105,13 +86,18 @@ namespace SnackisForum
                 options.LoginPath = "/Index";
             });
 
+            services.AddScoped<SetupDb>();
+
+
+
+
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, SetupDb setup)
         {
-            if (env.IsDevelopment())
+            if (CurrentEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseLiveReload();
@@ -137,6 +123,8 @@ namespace SnackisForum
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
+
+            setup.Setup();
         }
     }
 }

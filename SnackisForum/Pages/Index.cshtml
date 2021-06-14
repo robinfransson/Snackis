@@ -3,7 +3,7 @@
     @using SnackisDB.Models.Identity;*@
 
 @model Chatt_test.Pages.IndexModel
-
+@using SnackisDB; 
 @{
     ViewData["Title"] = "Start";
 }
@@ -33,15 +33,24 @@
                         </tr>
                     </thead>
                     @foreach (var subforum in forum.Subforums)
-                    {
+                            {
 
-                        int numberOfThreads = subforum.Threads.Count;
-                        var threads = subforum.Threads;
-                        threads.ForEach(thread => thread.Replies.OrderByDescending(reply => reply.DatePosted));
+                                int numberOfThreads = subforum.Threads.Count;
+                                var threads = subforum.Threads;
+                                threads.ForEach(thread => thread.Replies.OrderByDescending(reply => reply.DatePosted));
 
 
-                        int posts = subforum.Threads.Sum(x => x.Replies.Count);
-                        var lastReply = subforum.Threads.Any() ? subforum.Threads.SelectMany(thread => thread.Replies).OrderByDescending(reply => reply.DatePosted).FirstOrDefault() : null;
+                                int posts = subforum.Threads.Sum(x => x.Replies.Count);
+                                var lastReply = subforum.Threads.Any() ? subforum.Threads.SelectMany(thread => thread.Replies).OrderByDescending(reply => reply.DatePosted).FirstOrDefault() : null;
+                                var thread = subforum.Threads?.Select(thread => new
+                                {
+                                    threadID = thread.ID,
+                                    date = thread.CreatedOn,
+                                    author = thread.CreatedBy,
+                                    title = thread.Title
+
+                                }).OrderByDescending(x => x.date).FirstOrDefault();
+                                bool lastUpdatedIsThread = lastReply != null ? thread.date > lastReply.DatePosted : true;
                         <tr>
                             <td class="w-50" style="min-width: 50%; max-width: 50%">
                                 <div class="ps-3"><a href="@Url.Content($"~/Subforum/{subforum.ID}")">@subforum.Name</a></div>
@@ -49,17 +58,39 @@
                             </td>
 
                             <td class="w-50" style="min-width: 50%; max-width: 50%">
-                                @if (lastReply is null)
+                                @if (thread == null)
                                 {
 
-                                    <div class="text-end pe-3">Inga inlägg</div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="font-monospace text-end" style="font-size:100%;">Inga nya inlägg</div>
+                                        </div>
+                                        <div class="col me-4 mt-3" style="max-width:3rem">
+                                        </div>
+                                    </div>
+                                }
+                                else if (lastUpdatedIsThread)
+                                {
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="font-monospace text-end text-decoration-underline" style="font-size:125%;"><a href="@Url.Content($"~/Thread/{thread.threadID}")">@thread.title</a></div>
+                                            <div class="font-monospace text-end" style="font-size:75%;"> @thread.date.DaysAgo()</div>
+                                            <div class="font-monospace text-end" style="font-size:75%;">av @thread.author</div>
+                                        </div>
+                                        <div class="col me-4 mt-3" style="max-width:3rem">
+                                            <span class="material-icons-outlined pointer go-to-thread" id="" style="z-index:1" data-post-id="" data-thread-id="@thread.threadID">
+                                                arrow_right
+                                            </span>
+                                        </div>
+                                    </div>
                                 }
                                 else
                                 {
                                     <div class="row">
                                         <div class="col">
                                             <div class="font-monospace text-end text-decoration-underline" style="font-size:125%;"><a href="@Url.Content($"~/Thread/{lastReply.Thread.ID}")">@lastReply.Thread.Title</a></div>
-                                            <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DaysAgo()</div>
+                                            <div class="font-monospace text-end" style="font-size:75%;"> @lastReply.DatePosted.DaysAgo()</div>
                                             <div class="font-monospace text-end" style="font-size:75%;">av @Html.Raw(lastReply.Author == null ? "Anonym" : lastReply.Author.UserName)</div>
                                         </div>
                                         <div class="col me-4 mt-3" style="max-width:3rem">

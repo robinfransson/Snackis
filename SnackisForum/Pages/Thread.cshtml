@@ -3,9 +3,10 @@
 @inject SnackisContext context;
 @inject SnackisForum.Injects.UserProfile userProfile;
 @using SnackisDB.Models;
+@using SnackisDB;
 @{
 
-    int postNumber = 1;
+    int postNumber = 2; //börjar på 2 för att första "inlägget" är egentligen trådstart
     ViewData["Title"] = Model.Thread.Title;
     if (ViewData["Ajax"] != null)
     {
@@ -23,71 +24,111 @@
         </div>
 
     </div>
-    @foreach (var reply in Model.Thread.Replies)
-    {
-        var user = reply.Author;
-        var parentComment = reply.ReplyText;
-        bool hasParentComment = parentComment != null;
-        string datePosted = "";
-        datePosted = reply.DatePosted.ToString("yyyy/MM/dd HH:MM");
-        <div class="row border-bottom border-secondary " id="reply-@reply.ID">
-            <div class="col-1 pt-2" style="width:8rem;">
-                @if(user != null)
-                {
-                <img src="@user.ProfileImagePath" class="profile-picture" />
+    @{
 
-                @user.UserName
-                <div style="font-size:75%">Gick med</div>
-                <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
-                
-                }
-                else
-                {
-            <div>Anonym</div>
-                }
+        var threadAuthor = Model.Thread.CreatedBy;
+        string threadCreatedOn = Model.Thread.CreatedOn.ToString("yyyy/MM/dd HH:MM");
+    }
+    <div class="row border-bottom border-secondary " id="reply-1">
+        <div class="col-1 pt-2" style="width:8rem;">
+            <img src="@threadAuthor.ProfileImagePath" class="profile-picture" />
+
+            @threadAuthor.UserName
+            <div style="font-size:75%">Gick med</div>
+            <div style="font-size:75%">@threadAuthor.CreatedOn.ToShortDateString()</div>
+
+        </div>
+
+        <div class="col border-start border-secondary">
+            <div class="row text-break text-wrap ">
+                <div class="border-bottom border-secondary w-100">
+                    <div class="row w-100">
+                        <div class="col">@Model.Thread.CreatedOn.DaysAgo()</div>
+                        <div class="col text-end">#1</div>
+                    </div>
+                </div>
+                @*@if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
+                    {
+
+
+                    <div class="border-bottom fw-bold ps-3">@reply.ReplyTitle</div>
+                        <div class="font-monospace" style="font-size:75%">@reply.DaysAgo()</div>
+                    }*@
+
+                <div class="message-container text-break my-3" style="max-width:60rem;">
+                    @Model.Thread.Body
+                </div>
             </div>
+        </div>
+    </div>
+    @if (Model.Thread.Replies.Any())
+    {
 
-            <div class="col border-start border-secondary">
-                <div class="row text-break text-wrap ">
-                    <div class="border-bottom border-secondary w-100">
-                        <div class="row w-100">
-                            <div class="col">@reply.DaysAgo()</div>
-                            <div class="col text-end">#@postNumber</div>
-                        </div>
-                    </div>
-                    @*@if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
-                        {
-
-
-                        <div class="border-bottom fw-bold ps-3">@reply.ReplyTitle</div>
-                            <div class="font-monospace" style="font-size:75%">@reply.DaysAgo()</div>
-                        }*@
-                    @if (hasParentComment)
+        foreach (var reply in Model.Thread.Replies)
+        {
+            var user = reply.Author;
+            var parentComment = reply.ReplyText;
+            bool hasParentComment = parentComment != null;
+            //string datePosted = reply.DatePosted.DaysAgo();
+            <div class="row border-bottom border-secondary " id="reply-@reply.ID">
+                <div class="col-1 pt-2" style="width:8rem;">
+                    @if (user != null)
                     {
-                        <div class="border rounded ms-3 my-2 me-0 border-secondary w-75 text-break text-wrap reply-container">
-                            @*@if (!string.IsNullOrWhiteSpace(parentComment.ReplyTitle))
-                                {
-                                    <b>@parentComment</b>
-                                }*@
-                            <div class="mb-1">@parentComment</div>
-                            <div>av @reply.ReplyTo.UserName @reply.RepliedComment.DatePosted.ToString("yyyy/MM/dd HH:MM")</div>
-                        </div>
+                        <img src="@user.ProfileImagePath" class="profile-picture" />
+
+                        @user.UserName
+                        <div style="font-size:75%">Gick med</div>
+                        <div style="font-size:75%">@user.CreatedOn.ToShortDateString()</div>
+
                     }
-                    <div class="message-container text-break my-3" style="max-width:60rem;">
-                        @reply.Body
-                    </div>
-                    @if (Model.IsLoggedIn)
-
+                    else
                     {
-                        <div class="border-top border-secondary ps-3">
-                            <a href="">Svara</a>
-                        </div>
+                        <div>Anonym</div>
                     }
                 </div>
 
+                <div class="col border-start border-secondary">
+                    <div class="row text-break text-wrap ">
+                        <div class="border-bottom border-secondary w-100">
+                            <div class="row w-100">
+                                <div class="col">@reply.DatePosted.DaysAgo()</div>
+                                <div class="col text-end">#@postNumber</div>
+                            </div>
+                        </div>
+                        @*@if (!string.IsNullOrWhiteSpace(reply.ReplyTitle))
+                            {
+
+
+                            <div class="border-bottom fw-bold ps-3">@reply.ReplyTitle</div>
+                                <div class="font-monospace" style="font-size:75%">@reply.DaysAgo()</div>
+                            }*@
+                        @if (hasParentComment)
+                        {
+                            <div class="border rounded ms-3 my-2 me-0 border-secondary w-75 text-break text-wrap reply-container">
+                                @*@if (!string.IsNullOrWhiteSpace(parentComment.ReplyTitle))
+                                    {
+                                        <b>@parentComment</b>
+                                    }*@
+                                <div class="mb-1">@parentComment</div>
+                                <div>av @reply.ReplyTo.UserName @reply.RepliedComment.DatePosted.DaysAgo()</div>
+                            </div>
+                        }
+                        <div class="message-container text-break my-3" style="max-width:60rem;">
+                            @reply.Body
+                        </div>
+                        @*@if (Model.IsLoggedIn)
+
+                        {
+                            <div class="border-top border-secondary ps-3">
+                                <a href="">Svara</a>
+                            </div>
+                        }*@
+                    </div>
+
+                </div>
             </div>
-        </div>
-        postNumber++;
+            postNumber++;
+        }
     }
     @if (Model.IsLoggedIn)
     {

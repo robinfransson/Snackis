@@ -1,4 +1,46 @@
 ﻿@page
 @model SnackisForum.Pages.Admin.UsersModel
 @{
+    Layout = "_AdminLayout";
 }
+<div class="row" style="min-height:40rem;">
+    <partial name="_AdminSidePanel" />
+
+    <div class="col">
+        <div class="fs-1">
+            Användare
+        </div>
+        <table class="table table-borderless table-hover table-striped table-dark">
+            <thead class="">
+                <tr>
+
+                    <td>
+                        Användarnamn
+
+                    </td>
+                    <td class="">
+                        Skapad
+                    </td>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td class="" style="">
+                            @user.UserName
+                        </td>
+                        <td class="" style="">
+                            @user.CreatedOn.ToString("dd/MM/yy HH:mm")
+                        </td>
+
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>

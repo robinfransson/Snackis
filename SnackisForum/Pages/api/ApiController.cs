@@ -23,7 +23,7 @@ namespace SnackisForum.Pages.api
         {
             if (!_context.Threads.Any(thread => thread.ID == id))
             {
-                return Content("Ingen tråd med det id:t funnen");
+                return Content($"Ingen tråd med ID {id} hittad.");
             }
             var dbquery = await _context.Threads.Where(thread => thread.ID == id)
                                          .Include(thread => thread.Replies)
@@ -39,12 +39,11 @@ namespace SnackisForum.Pages.api
                 titel = thread.Title,
                 tradstart = thread.Body,
                 skapare = thread.CreatedBy.UserName,
-                datum = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
+                skapad = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
                 svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                 {
                     svar_nr = index + 1,
-                    svar_id = reply.ID,
-                    svar_till = reply.RepliedComment == null ? "trådstart" : "id=" + reply.RepliedComment.ID,
+                    svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
                     anvandare = reply.Author.UserName,
                     datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
                     titel = reply.Title,
@@ -58,7 +57,7 @@ namespace SnackisForum.Pages.api
         [HttpGet("forum/all")]
         public async Task<IActionResult> GetAllAsync()
         {
-            if (!_context.Forums.Any() || !_context.Subforums.Any())
+            if (!_context.Forums.Any())
             {
                 return Content("Det finns ingen data att hämta för tillfället.");
             }
@@ -91,13 +90,12 @@ namespace SnackisForum.Pages.api
                         titel = thread.Title,
                         tradstart = thread.Body,
                         skapare = thread.CreatedBy.UserName,
-                        datum = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
+                        skapad = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
                         svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                         {
-                            svar_nr = index,
-                            svar_id = reply.ID,
-                            svar_till = reply.RepliedComment == null ? "trådstart" : "id=" + reply.RepliedComment.ID,
-                            anvandare = reply.Author.UserName,
+                            svar_nr = index + 1,
+                            svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
+                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
                             datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
                             titel = reply.Title,
                             text = reply.Body
@@ -109,7 +107,7 @@ namespace SnackisForum.Pages.api
 
             return Ok(allInfo);
         }
-        [HttpGet("forum/sub/{name}")]
+        [HttpGet("sub/{name}")]
         public async Task<IActionResult> GetAllSubforumAsync(string name)
         {
             if (!_context.Subforums.Any(sub => sub.Name.ToLower() == name.ToLower()))
@@ -139,13 +137,12 @@ namespace SnackisForum.Pages.api
                     titel = thread.Title,
                     tradstart = thread.Body,
                     skapare = thread.CreatedBy.UserName,
-                    datum = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
+                    skapad = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
                     svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                     {
-                        svar_nr = index,
-                        svar_id = reply.ID,
-                        svar_till = reply.RepliedComment == null ? "trådstart" : "id=" + reply.RepliedComment.ID,
-                        anvandare = reply.Author.UserName,
+                        svar_nr = index + 1,
+                        svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
+                        anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
                         datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
                         titel = reply.Title,
                         text = reply.Body
@@ -195,13 +192,13 @@ namespace SnackisForum.Pages.api
                         titel = thread.Title,
                         tradstart = thread.Body,
                         skapare = thread.CreatedBy.UserName,
-                        datum = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
+                        skapad = thread.CreatedOn.ToString("dd/MM/yy HH:mm"),
                         svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                         {
-                            svar_nr = index,
+                            svar_nr = index + 1,
                             svar_id = reply.ID,
                             svar_till = reply.RepliedComment == null ? "trådstart" : "id=" + reply.RepliedComment.ID,
-                            anvandare = reply.Author.UserName,
+                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
                             datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
                             titel = reply.Title,
                             text = reply.Body

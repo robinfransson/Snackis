@@ -22,5 +22,6 @@ namespace SnackisForum
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }

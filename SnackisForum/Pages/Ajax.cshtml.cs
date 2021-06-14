@@ -116,7 +116,7 @@ namespace SnackisForum.Pages
                     catch (Exception e)
                     {
                         _logger.LogError(e.ToString());
-                        return new JsonResult(new { exception = e.ToString(), inner = e.InnerException.ToString() });
+                        return new JsonResult(new { exception = e.ToString(), inner = e.InnerException?.ToString() });
                     }
                 }
 

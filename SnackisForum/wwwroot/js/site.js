@@ -108,10 +108,11 @@ $(document).ready(function () {
             },
             success: function (result) {
                 if (result.success == true) {
-                    alert('you are now admin!');
+                    location.replace('https://localhost:5001/Admin/')
+
                 }
                 else {
-                    alert('something went wrong!')
+                    alert('Något gick fel!')
                 }
             }
 
@@ -147,7 +148,7 @@ $(document).ready(function () {
         $.post("/ajax?handler=login", data, function (result) {
             console.log(result);
             if (result.success == false) {
-                alert('wrong username or password');
+                alert('Fel användarnamn eller lösenord');
             }
             else {
 
@@ -174,7 +175,7 @@ $(document).ready(function () {
                 window.location.reload();
             }
             else if (result.success == false) {
-                alert('could not log in, try again');
+                alert('Kunde inte logga in, försök igen');
             }
         });
     })
@@ -191,7 +192,7 @@ $(document).ready(function () {
 
         var forum = prompt("Skriv in ett namn på forumet:", "");
         if (forum == null || forum == "") {
-            alert("Avbröt");
+            alert("Avbröt åtgärden");
         } else {
             addForum(forum);
         }
@@ -203,7 +204,7 @@ $(document).ready(function () {
 
         var subforumname = prompt("Skriv in ett namn på delforumet:", "");
         if (subforumname == null || subforumname == "") {
-            alert("Avbröt");
+            alert("Avbröt åtgärden");
         } else {
             addSubforum(subforumname, forumid);
         }
@@ -239,12 +240,12 @@ function logout() {
                 console.log("yay");
             }
             else {
-                alert('could not log out, try again');
+                alert('Kunde inte logga ut, försök igen');
             }
         },
     })
         .fail(function () {
-            alert('Could not log out!');
+            alert('Kunde inte logga ut, försök igen!');
         })
         .done(function (result) {
 

@@ -1,0 +1,50 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@inject SnackisDB.Models.SnackisContext _context; 
+@{
+    int newReports = _context.Reports.Count(report => !report.ActionTaken);
+    int users = _context.Users.Count();
+}
+<div class="col-2 mt-2">
+    <table class="table table-dark table-hover table-striped table-bordered mt-2 ">
+        <thead>
+            <tr>
+                <td>
+                    Meny
+                </td>
+            </tr>
+        </thead>
+        <tbody class="clickable">
+
+
+            <tr>
+
+                <td class="">
+
+                        <div class="fs-5">Adminpanel</div>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="">
+
+                    <a href="/Admin/Reports" style="text-decoration:none;">
+                        <div class="fs-5">Anmälningar</div>
+                        <div class="fs-6">Antal nya: @newReports</div>
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <a href="/Admin/Users" style="text-decoration:none">
+                        <div class="fs-5">Antal användare:</div>
+                        <div class="fs-6">@users</div>
+                    </a>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>

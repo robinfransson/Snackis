@@ -17,11 +17,6 @@ namespace SnackisForum.Pages
     {
 
 
-        public Subforum Subforum { get; set; }
-        [BindProperty]
-        public ForumThread Thread { get; set; }
-        [BindProperty]
-        public ForumReply Reply { get; set; }
 
         private readonly UserManager<SnackisUser> _userManager;
         private readonly SignInManager<SnackisUser> _signInManager;
@@ -37,6 +32,14 @@ namespace SnackisForum.Pages
             _signInManager = signInManager;
             _logger = logger;
         }
+
+
+
+
+
+        public Subforum Subforum { get; set; }
+        [BindProperty]
+        public ForumThread Thread { get; set; }
 
 
 
@@ -56,17 +59,10 @@ namespace SnackisForum.Pages
                                                        .FirstOrDefaultAsync();
                 var user = await _userManager.GetUserAsync(User);
 
-                Reply.DatePosted = currentTime;
-
-                Reply.Author = user;
 
                 Thread.CreatedBy = user;
                 Thread.CreatedOn = currentTime;
 
-                Thread.Replies = new()
-                {
-                    Reply
-                };
                 subforum.Threads.Add(Thread);
                 _context.SaveChanges();
 

@@ -3,6 +3,7 @@
 *@
 @{
 }
+@using SnackisDB; 
 @inject SnackisForum.Injects.UserProfile userProfile;
 @model object
 
@@ -36,7 +37,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @reply.DaysAgo()
+                    @reply.DatePosted.DaysAgo()
                 </div>
             </div>
         </div>

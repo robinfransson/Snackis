@@ -40,22 +40,14 @@ namespace Chatt_test.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            bool canConnect = await _context.Database.CanConnectAsync();
-            if (canConnect && !_context.Roles.Any())
-            {
 
-               InitialSetup();
-            }
-
-            bool rolesExist = await _roleManager.RoleExistsAsync("Admin");
-            if (!rolesExist)
-            {
-                await CreateRoles();
-            }
             Forums = await _context.Forums.Include(forum => forum.Subforums)
                                     .ThenInclude(sub => sub.Threads)
                                         .ThenInclude(thread => thread.Replies)
-                                        .ThenInclude(reply => reply.Author)
+                                            .ThenInclude(reply => reply.Author)
+                                    .Include(forum => forum.Subforums)
+                                    .ThenInclude(sub => sub.Threads)
+                                    .ThenInclude(thread => thread.CreatedBy)
                                .ToListAsync();
 
             return Page();
@@ -64,31 +56,8 @@ namespace Chatt_test.Pages
 
         public  IActionResult InitialSetup()
         {
-            _logger.LogInformation("Setting up the database...");
-            _context.Database.EnsureCreated();
-            _logger.LogInformation("Done!");
             return RedirectToPage();
         }
 
-        #region Create roles
-
-        private async Task CreateRoles()
-        {
-            IdentityRole[] roles = { new IdentityRole
-            {
-                Name = "Admin"
-            }, new IdentityRole
-            {
-                Name = "User"
-            }
-            };
-            foreach (var role in roles)
-            {
-                _logger.LogInformation("Created role " + role.Name);
-                await _roleManager.CreateAsync(role);//
-            }
-        }
-
-        #endregion
     }
 }
