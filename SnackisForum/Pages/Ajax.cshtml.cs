@@ -20,19 +20,17 @@ namespace SnackisForum.Pages
         private readonly SignInManager<SnackisUser> _signInManager;
         private readonly SnackisContext _context;
         private readonly ILogger<AjaxModel> _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserProfile _userProfile;
 
 
 
         public AjaxModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
-                        SnackisContext context, ILogger<AjaxModel> logger, RoleManager<IdentityRole> roleManager, UserProfile userProfile)
+                        SnackisContext context, ILogger<AjaxModel> logger, UserProfile userProfile)
         {
             _userManager = userManager;
             _context = context;
             _signInManager = signInManager;
             _logger = logger;
-            _roleManager = roleManager;
             _userProfile = userProfile;
         }
         #endregion

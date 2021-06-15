@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SnackisForum.Injects;
-using SnackisDB.Models.Identity;
 using SnackisDB.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace SnackisForum.Pages.Admin
@@ -33,12 +30,16 @@ namespace SnackisForum.Pages.Admin
         public int Reports { get; set; }
         public IActionResult OnGet([FromServices] UserProfile profile)
         {
-            if(profile.IsAdmin)
-            { 
-            Forums = _context.Forums.Include(forum => forum.Subforums).ThenInclude(sub => sub.Threads).ThenInclude(thread => thread.Replies).ToList();
-            Reports = _context.Reports.Count(report => !report.ActionTaken);
-            Users = _context.Users.Count();
-            return Page();
+            if (profile.IsAdmin)
+            {
+                Forums = _context.Forums.Include(forum => forum.Subforums)
+                                            .ThenInclude(sub => sub.Threads)
+                                                .ThenInclude(thread => thread.Replies)
+                                            .AsSplitQuery()
+                                            .ToList();
+                Reports = _context.Reports.Count(report => !report.ActionTaken);
+                Users = _context.Users.Count();
+                return Page();
             }
             return RedirectToPage("../Index");
 

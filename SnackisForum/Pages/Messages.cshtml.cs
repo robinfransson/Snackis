@@ -16,16 +16,18 @@ namespace SnackisForum.Pages
         #region Readonlies and constuctor
         private readonly SnackisContext _context;
         private readonly UserProfile _profile;
-        private readonly ILogger<MessagesModel> _logger;
-        public MessagesModel(SnackisContext context, UserProfile userProfile, ILogger<MessagesModel> logger)
+        public MessagesModel(SnackisContext context, UserProfile userProfile)
         {
             _context = context;
             _profile = userProfile;
-            _logger = logger;
         }
 
         public List<Chat> Chats { get; set; }
         #endregion
+
+
+
+
 
         #region On get
         public IActionResult OnGet()

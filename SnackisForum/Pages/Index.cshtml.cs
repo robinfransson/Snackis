@@ -16,27 +16,23 @@ namespace Chatt_test.Pages
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class IndexModel : PageModel
     {
-        public bool LoggedIn { get; set; }
-        public List<Forum> Forums { get; set; }
 
 
-
-        private readonly SignInManager<SnackisUser> _signInManager;
         public readonly UserProfile _profile;
         public readonly SnackisContext _context;
         public readonly ILogger<IndexModel> _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public IndexModel(SignInManager<SnackisUser> signInManager, UserProfile profile, 
-                          SnackisContext context, ILogger<IndexModel> logger,
-                          RoleManager<IdentityRole> roleManager)
+        public IndexModel(UserProfile profile, SnackisContext context, ILogger<IndexModel> logger)
         {
-            _signInManager = signInManager;
             _profile = profile;
             _context = context;
             _logger = logger;
-            _roleManager = roleManager;
         }
+
+
+        public bool LoggedIn { get; set; }
+        public List<Forum> Forums { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -48,15 +44,11 @@ namespace Chatt_test.Pages
                                     .Include(forum => forum.Subforums)
                                     .ThenInclude(sub => sub.Threads)
                                     .ThenInclude(thread => thread.CreatedBy)
+                                    .AsSplitQuery()
                                .ToListAsync();
 
             return Page();
 
-        }
-
-        public  IActionResult InitialSetup()
-        {
-            return RedirectToPage();
         }
 
     }

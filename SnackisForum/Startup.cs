@@ -10,6 +10,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using SnackisForum.Injects;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace SnackisForum
 {
@@ -45,6 +46,7 @@ namespace SnackisForum
                 services.AddDbContext<SnackisContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("azure"));
+                    options.ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
                 });
             }
 

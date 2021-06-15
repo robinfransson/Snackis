@@ -31,6 +31,7 @@ namespace SnackisForum.Pages.api
                                          .Include(thread => thread.CreatedBy)
                                          .Include(thread => thread.Replies)
                                             .ThenInclude(reply => reply.RepliedComment)
+                                         .AsSplitQuery()
                                          .ToListAsync();
 
 
@@ -76,6 +77,7 @@ namespace SnackisForum.Pages.api
                                                    .ThenInclude(sub => sub.Threads)
                                                        .ThenInclude(thread => thread.Replies)
                                                            .ThenInclude(reply => reply.Author)
+                                               .AsSplitQuery()
                                                .ToListAsync();
 
 
@@ -126,6 +128,7 @@ namespace SnackisForum.Pages.api
                                               .Include(sub => sub.Threads)
                                                   .ThenInclude(thread => thread.Replies)
                                                       .ThenInclude(reply => reply.Author)
+                                              .AsSplitQuery()
                                               .ToListAsync();
 
 
@@ -174,6 +177,7 @@ namespace SnackisForum.Pages.api
                                                  .ThenInclude(sub => sub.Threads)
                                                      .ThenInclude(thread => thread.Replies)
                                                          .ThenInclude(reply => reply.Author)
+                                             .AsSplitQuery()
                                              .ToListAsync();
             if (!query.Any() || !query.Any(forum => forum.Subforums.Any()))
             {

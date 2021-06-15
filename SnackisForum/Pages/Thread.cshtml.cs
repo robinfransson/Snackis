@@ -15,12 +15,6 @@ namespace SnackisForum.Pages
 {
     public class ThreadModel : PageModel
     {
-        public ForumThread Thread { get; set; }
-
-
-        public bool IsLoggedIn { get; set; }
-        public DateTime CreatedOn { get; set; }
-        private readonly UserManager<SnackisUser> _userManager;
         private readonly SignInManager<SnackisUser> _signInManager;
         private readonly SnackisContext _context;
         private readonly ILogger<ThreadModel> _logger;
@@ -29,14 +23,26 @@ namespace SnackisForum.Pages
         public ForumReply Reply { get; set; }
 
 
-        public ThreadModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager,
+        public ThreadModel(SignInManager<SnackisUser> signInManager,
             SnackisContext context, ILogger<ThreadModel> logger)
         {
             _logger = logger;
-            _userManager = userManager;
             _context = context;
             _signInManager = signInManager;
         }
+
+
+
+
+        public ForumThread Thread { get; set; }
+        public bool IsLoggedIn { get; set; }
+        public DateTime CreatedOn { get; set; }
+
+
+
+
+
+
         public IActionResult OnGet(int id)
         {
             Thread = _context.Threads.Where(thread => thread.ID == id)?

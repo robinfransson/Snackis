@@ -15,7 +15,7 @@ namespace SnackisForum.Injects
 
 
         bool disposed = false;
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        readonly SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
         public SetupDb(ILogger<SetupDb> logger, SnackisDB.Models.SnackisContext context, RoleManager<IdentityRole> roleManager)
         {
