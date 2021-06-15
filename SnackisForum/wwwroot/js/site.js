@@ -69,7 +69,7 @@ function removeForum(id) {
             xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
         },
         success: function () {
-                location.replace('https://localhost:5001/Admin/')
+                location.replace('/Admin/')
         }
 
     })
@@ -82,7 +82,7 @@ function removeSubforum(id) {
             xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
         },
         success: function () {
-                location.replace('https://localhost:5001/Admin/')
+                location.replace('/Admin/')
         }
 
     })
@@ -160,7 +160,7 @@ $(document).ready(function () {
             },
             success: function (result) {
                 if (result.success == true) {
-                    location.replace('https://localhost:5001/Admin/')
+                    location.replace('/Admin/')
 
                 }
                 else {

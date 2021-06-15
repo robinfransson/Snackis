@@ -44,16 +44,26 @@ namespace SnackisForum.Pages
         #region Make admin
         public async Task<JsonResult> OnPostMakeAdminAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var result = await _userManager.AddToRoleAsync(user, "Admin");
-            if (result.Succeeded)
+            int adminUsers = _userManager.GetUsersInRoleAsync("Admin").Result.Count;
+            if (adminUsers < 1)
             {
-                return new JsonResult(new { success = true });
-            }
-            else
-                return new JsonResult(new { success = false });
 
+                var user = await _userManager.GetUserAsync(User);
+                var result = await _userManager.AddToRoleAsync(user, "Admin");
+                if (result.Succeeded)
+                {
+                    return new JsonResult(new { success = true });
+                }
+                else
+                {
+
+                    return new JsonResult(new { success = false });
+                }
+            }
+            return new JsonResult(new { success = false });
         }
+
+
 
         #endregion
 
@@ -162,15 +172,15 @@ namespace SnackisForum.Pages
         #region Create Forum
         public void OnPostCreateForum(string forumName)
         {
-            if(_userProfile.IsAdmin && _userProfile.IsLoggedIn)
+            if (_userProfile.IsAdmin && _userProfile.IsLoggedIn)
             {
 
-            var forum = new Forum()
-            {
-                Name = forumName
-            };
-            _context.Forums.Add(forum);
-            _context.SaveChanges();
+                var forum = new Forum()
+                {
+                    Name = forumName
+                };
+                _context.Forums.Add(forum);
+                _context.SaveChanges();
             }
         }
         #endregion
@@ -314,9 +324,9 @@ namespace SnackisForum.Pages
                                             .Include(chat => chat.Participant2)
                                             .ToListAsync();
             int newMessages = model.Sum(model => model.Messages.Count(message => !message.HasBeenViewed && message.Sender != _userProfile.Username));
-            return new(new { messages = newMessages > 9 ? "9+" : $"{newMessages}"});
-            
-            
+            return new(new { messages = newMessages > 9 ? "9+" : $"{newMessages}" });
+
+
 
         }
         #endregion
@@ -363,7 +373,7 @@ namespace SnackisForum.Pages
         }
         #endregion
 
-
+        #region Remove forum
         public async Task OnPostRemoveForumAsync(int id)
         {
             if (_userProfile.IsAdmin)
@@ -384,7 +394,10 @@ namespace SnackisForum.Pages
                 await _context.SaveChangesAsync();
             }
         }
+        #endregion
 
+
+        #region Remove subforum
         public async Task OnPostRemoveSubforumAsync(int id)
         {
             if (_userProfile.IsAdmin)
@@ -398,6 +411,7 @@ namespace SnackisForum.Pages
                 await _context.SaveChangesAsync();
             }
         }
+        #endregion
 
     }
 }
