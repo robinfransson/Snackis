@@ -52,7 +52,7 @@ namespace SnackisForum.Injects
             _logger.LogInformation($"Checking database... can connect: {canConnect} ");
             bool dbCreatedNow = _context.Database.EnsureCreated();
             _logger.LogInformation($"Checking database... database exists: {!dbCreatedNow}");
-            
+
             if (!dbCreatedNow)
             {
 
@@ -65,8 +65,8 @@ namespace SnackisForum.Injects
                 try
                 {
 
-                        CheckIfRolesExists().Wait();
-                        _logger.LogInformation("Done setting up the database!");
+                    CheckIfRolesExists().Wait();
+                    _logger.LogInformation("Done setting up the database!");
                 }
                 catch (Exception e)
                 {

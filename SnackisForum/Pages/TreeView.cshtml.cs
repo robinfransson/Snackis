@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisDB.Models.Identity;
 using SnackisForum.Injects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SnackisForum.Pages
 {
@@ -143,7 +143,7 @@ namespace SnackisForum.Pages
                                                 {
 
                                                     id = "reply-" + reply.ID,
-                                                    parent = reply.RepliedComment == null ? "thread-" + thread.ID: "reply-" + reply.RepliedComment.ID,
+                                                    parent = reply.RepliedComment == null ? "thread-" + thread.ID : "reply-" + reply.RepliedComment.ID,
                                                     text = string.IsNullOrWhiteSpace(reply.Title) ? "Svar till " + thread.Title : reply.Title,
 
                                                     state = new
@@ -268,7 +268,7 @@ namespace SnackisForum.Pages
             forums.AddRange(replies);
 
 
-            while(!nodeID.StartsWith("forum"))
+            while (!nodeID.StartsWith("forum"))
             {
                 var current = forums.Where(obj => obj.id == nodeID).FirstOrDefault();
                 forums.Remove(current);

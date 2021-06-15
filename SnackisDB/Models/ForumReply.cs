@@ -1,17 +1,11 @@
 ﻿using SnackisDB.Models.Identity;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SnackisDB.Models
 {
     public class ForumReply
     {
-        
+
         public int ID { get; set; }
 
         public ForumThread Thread { get; set; }

@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnackisDB.Models.Identity;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SnackisForum.Injects
 {
@@ -15,16 +12,18 @@ namespace SnackisForum.Injects
         private readonly SnackisDB.Models.SnackisContext _context;
         private readonly SignInManager<SnackisUser> _signInManager;
         private HttpContext httpContext;
-        public int UnreadMessages { 
-            get {
+        public int UnreadMessages
+        {
+            get
+            {
                 return !_context.Chats.Any(chat => chat.Participant1 == CurrentUser || chat.Participant2 == CurrentUser) ? 0 :
                                           _context.Chats
                                           .Where(chat => chat.Participant1 == CurrentUser || chat.Participant2 == CurrentUser)
                                           .Include(chat => chat.Messages)
                                           .AsEnumerable()
                                           .Sum(chat => chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != Username));
-                                          
-                }
+
+            }
         }
 
         public SnackisUser CurrentUser => _userManager.GetUserAsync(httpContext.User).Result;
@@ -39,7 +38,7 @@ namespace SnackisForum.Injects
         public int Notifications { get; set; }
         //public int Notifications { get; set; }
         public bool IsLoggedIn => _signInManager.IsSignedIn(httpContext.User);
-        public UserProfile(UserManager<SnackisDB.Models.Identity.SnackisUser> userManager, 
+        public UserProfile(UserManager<SnackisDB.Models.Identity.SnackisUser> userManager,
                            IHttpContextAccessor httpContextAccessor, SnackisDB.Models.SnackisContext context,
                            SignInManager<SnackisUser> signInManager)
         {

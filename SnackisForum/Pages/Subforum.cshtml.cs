@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using SnackisDB.Models;
 using SnackisDB.Models.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SnackisForum.Pages
 {
@@ -28,7 +25,7 @@ namespace SnackisForum.Pages
         public SubforumModel(UserManager<SnackisUser> userManager, SignInManager<SnackisUser> signInManager, SnackisContext context)
         {
             _userManager = userManager;
-            _context = context; 
+            _context = context;
             _signInManager = signInManager;
         }
         public void OnGet(int id)

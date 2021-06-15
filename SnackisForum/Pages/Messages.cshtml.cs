@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
 using SnackisForum.Injects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace SnackisForum.Pages
 {
     public class MessagesModel : PageModel
@@ -35,11 +33,11 @@ namespace SnackisForum.Pages
             if (_profile.IsLoggedIn)
             {
 
-            Chats = _context.Chats.Where(chat => chat.Participant1 == _profile.CurrentUser || chat.Participant2 == _profile.CurrentUser)
-                                  .Include(Chat => Chat.Messages)
-                                  .Include(chat => chat.Participant1)
-                                  .Include(chat => chat.Participant2)
-                                  .ToList();
+                Chats = _context.Chats.Where(chat => chat.Participant1 == _profile.CurrentUser || chat.Participant2 == _profile.CurrentUser)
+                                      .Include(Chat => Chat.Messages)
+                                      .Include(chat => chat.Participant1)
+                                      .Include(chat => chat.Participant2)
+                                      .ToList();
                 return Page();
             }
             return RedirectToPage("~/");
@@ -47,7 +45,7 @@ namespace SnackisForum.Pages
         }
         #endregion
 
- 
+
         #region Send message
         public IActionResult OnPost(string recipient, string title, string message)
         {

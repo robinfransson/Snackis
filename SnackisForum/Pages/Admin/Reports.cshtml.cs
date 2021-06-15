@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnackisDB.Models;
-using SnackisDB.Models.Identity;
 using SnackisForum.Injects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SnackisForum.Pages.Admin
 {
@@ -35,7 +33,7 @@ namespace SnackisForum.Pages.Admin
 
         public IActionResult OnGet()
         {
-            if(_profile.IsAdmin)
+            if (_profile.IsAdmin)
             {
 
                 Reports = _context.Reports.Include(report => report.Reporter)
@@ -58,9 +56,9 @@ namespace SnackisForum.Pages.Admin
             if (_profile.IsAdmin)
             {
                 object reported = type == "thread" ? await _context.Threads.FirstOrDefaultAsync(thread => thread.ID == id) : await _context.Replies.FirstOrDefaultAsync(thread => thread.ID == id);
-                if(reported is not null)
+                if (reported is not null)
                 {
-                    if(remove)
+                    if (remove)
                     {
                         UpdateForumContent(reported);
                     }

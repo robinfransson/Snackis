@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SnackisForum.Injects;
-using SnackisDB.Models;
 using Microsoft.EntityFrameworkCore;
+using SnackisDB.Models;
+using SnackisForum.Injects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SnackisForum.Pages.Admin
 {

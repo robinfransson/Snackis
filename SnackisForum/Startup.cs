@@ -1,16 +1,16 @@
-using SnackisDB.Models;
-using SnackisDB.Models.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
+using SnackisDB.Models;
+using SnackisDB.Models.Identity;
 using SnackisForum.Injects;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using System;
 
 namespace SnackisForum
 {
@@ -29,7 +29,7 @@ namespace SnackisForum
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if(CurrentEnvironment.IsDevelopment())
+            if (CurrentEnvironment.IsDevelopment())
             {
 
                 services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -71,7 +71,7 @@ namespace SnackisForum
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 5;
-               
+
             })
                 .AddEntityFrameworkStores<SnackisContext>()
                 .AddRoles<IdentityRole>()
