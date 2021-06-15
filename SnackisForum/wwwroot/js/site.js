@@ -61,7 +61,32 @@ function addSubforum(name, parentID) {
 
     });
 }
+function removeForum(id) {
+    $.post({
+        url: "/Ajax?Handler=RemoveForum",
+        data: {id},
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+        },
+        success: function () {
+                location.replace('https://localhost:5001/Admin/')
+        }
 
+    })
+}
+function removeSubforum(id) {
+    $.post({
+        url: "/Ajax?Handler=RemoveSubforum",
+        data: {id},
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("XSRF-TOKEN", $('input[name="__RequestVerificationToken"]').val())
+        },
+        success: function () {
+                location.replace('https://localhost:5001/Admin/')
+        }
+
+    })
+}
 
 function addForum(name) {
     $.post({
@@ -79,6 +104,33 @@ function addForum(name) {
 
 
 $(document).ready(function () {
+    $(".remove-forum").on('click', function (e) {
+        var forumID = parseInt($(this).data("id"));
+        var input = prompt("Är du säker?\nSkriv 'ja' för att ta bort forumet", "");
+
+         
+        if (input == null || input.toLowerCase() != "ja") {
+            alert("Avbröt åtgärden");
+        } else {
+            removeForum(forumID)
+        }
+        
+
+    })
+    $(".remove-subforum").on('click', function (e) {
+        var subforumID = parseInt($(this).data("id"));
+        var input = prompt("Är du säker?\nSkriv 'ja' för att ta bort delforumet", "");
+
+
+
+        if (input == null || input.toLowerCase() != "ja") {
+            alert("Avbröt åtgärden");
+        } else {
+            removeSubforum(subforumID)
+        }
+        
+
+    })
     $('.reported-click').click(function () {
         console.log('action taken!')
         $.post({

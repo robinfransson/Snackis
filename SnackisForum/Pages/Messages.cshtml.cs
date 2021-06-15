@@ -28,14 +28,19 @@ namespace SnackisForum.Pages
         #endregion
 
         #region On get
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (_profile.IsLoggedIn)
+            {
+
             Chats = _context.Chats.Where(chat => chat.Participant1 == _profile.CurrentUser || chat.Participant2 == _profile.CurrentUser)
                                   .Include(Chat => Chat.Messages)
                                   .Include(chat => chat.Participant1)
                                   .Include(chat => chat.Participant2)
                                   .ToList();
-
+                return Page();
+            }
+            return RedirectToPage("~/");
 
         }
         #endregion

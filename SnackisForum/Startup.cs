@@ -30,6 +30,8 @@ namespace SnackisForum
         {
             if(CurrentEnvironment.IsDevelopment())
             {
+
+                services.AddRazorPages().AddRazorRuntimeCompilation();
                 Console.WriteLine("Vilken anslutningssträng ska användas? 'local' eller 'azure'");
                 string connectionString = Console.ReadLine();
                 services.AddDbContext<SnackisContext>(options =>
@@ -38,7 +40,8 @@ namespace SnackisForum
                 });
             }
             else
-            {   
+            {
+                services.AddRazorPages();
                 services.AddDbContext<SnackisContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("azure"));
@@ -46,10 +49,9 @@ namespace SnackisForum
             }
 
             services.AddAuthorization();
-            services.AddRazorPages();
             services.AddHttpContextAccessor();
 
-            services.AddScoped<SnackisForum.Injects.UserProfile>();
+            services.AddScoped<UserProfile>();
 
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 

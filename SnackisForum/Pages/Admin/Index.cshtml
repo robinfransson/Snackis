@@ -23,6 +23,7 @@
 
                         <td>
                             <div class="fs-2">@forum.Name</div>
+                            <div class="text-decoration-underline noselect clickable d-inline-block remove-forum" data-id="@forum.ID">Ta bort</div>
 
                         </td>
                         <td class="d-flex justify-content-end">
@@ -45,6 +46,8 @@
                         <td class="w-50" style="min-width: 50%; max-width: 50%">
                             <div class="ps-3"><a href="@Url.Content($"~/Subforum/{subforum.ID}")">@subforum.Name</a></div>
                             <div class="ps-3 font-monospace" style="font-size:75%;">@numberOfThreads ämnen &bull; @posts inlägg</div>
+
+                            <div class="ps-3 text-decoration-underline noselect clickable d-inline-block remove-subforum" data-id="@subforum.ID">Ta bort</div>
                         </td>
                     </tr>
 

@@ -364,5 +364,40 @@ namespace SnackisForum.Pages
         #endregion
 
 
+        public async Task OnPostRemoveForumAsync(int id)
+        {
+            if (_userProfile.IsAdmin)
+            {
+                var forum = await _context.Forums.Where(forum => forum.ID == id)
+                                                 .Include(forum => forum.Subforums)
+                                                    .ThenInclude(subforum => subforum.Threads)
+                                                        .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
+
+
+
+                forum.Subforums.ForEach(sub => sub.Threads.ForEach(thread => thread.Replies.Clear()));
+                forum.Subforums.ForEach(sub => sub.Threads.Clear());
+                forum.Subforums.Clear();
+
+
+                _context.Forums.Remove(forum);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task OnPostRemoveSubforumAsync(int id)
+        {
+            if (_userProfile.IsAdmin)
+            {
+                var subforum = await _context.Subforums.Where(subforum => subforum.ID == id)
+                                                 .Include(forum => forum.Threads)
+                                                 .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
+                subforum.Threads.ForEach(thread => thread.Replies.Clear());
+                subforum.Threads.Clear();
+                _context.Subforums.Remove(subforum);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }
