@@ -14,7 +14,7 @@ namespace SnackisDB
             var elasped = now.Subtract(dt);
             double daysAgo = elasped.TotalDays;
 
-            var numbersToAddZeroTo = Enumerable.Range(1, 10);
+            var numbersToAddZeroTo = Enumerable.Range(0, 10);
             if (numbersToAddZeroTo.Contains(dt.Hour))
             {
                 hours = "0" + hours;

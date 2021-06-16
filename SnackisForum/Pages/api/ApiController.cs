@@ -28,12 +28,14 @@ namespace SnackisForum.Pages.api
                                          .Include(thread => thread.CreatedBy)
                                          .Include(thread => thread.Replies)
                                             .ThenInclude(reply => reply.RepliedComment)
+                                                .ThenInclude(replied => replied.Author)
                                          .AsSplitQuery()
                                          .ToListAsync();
 
 
             var thread = dbquery.Select(thread => new
             {
+                trad_id = thread.ID,
                 titel = thread.Title,
                 tradstart = thread.Body,
                 skapare = thread.CreatedBy.UserName,
@@ -41,11 +43,15 @@ namespace SnackisForum.Pages.api
                 svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                 {
                     svar_nr = index + 1,
-                    svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
-                    anvandare = reply.Author.UserName,
-                    datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
+                    svar_till = reply.RepliedComment == null ? $"trådstart, {thread.Title} av {thread.CreatedBy.UserName}" : $"inlägg, {reply.RepliedComment.Title} av {(reply.RepliedComment.Author == null ? "Anonym" : $"{reply.RepliedComment.Author.UserName}")}",
+
                     titel = reply.Title,
-                    text = reply.Body
+                    text = reply.Body,
+                    anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
+                    datum = reply.DatePosted.ToString("dd/MM/yy HH:mm")
+
+
+
 
                 }).ToList()
             }).ToList();
@@ -70,6 +76,7 @@ namespace SnackisForum.Pages.api
                                                    .ThenInclude(sub => sub.Threads)
                                                        .ThenInclude(thread => thread.Replies)
                                                            .ThenInclude(reply => reply.RepliedComment)
+                                                               .ThenInclude(replied => replied.Author)
                                                .Include(forum => forum.Subforums)
                                                    .ThenInclude(sub => sub.Threads)
                                                        .ThenInclude(thread => thread.Replies)
@@ -86,6 +93,7 @@ namespace SnackisForum.Pages.api
                     sub_namn = sub.Name,
                     tradar = sub.Threads.Select(thread => new
                     {
+                        trad_id = thread.ID,
                         titel = thread.Title,
                         tradstart = thread.Body,
                         skapare = thread.CreatedBy.UserName,
@@ -93,12 +101,12 @@ namespace SnackisForum.Pages.api
                         svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                         {
                             svar_nr = index + 1,
-                            svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
-                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
-                            datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
-                            titel = reply.Title,
-                            text = reply.Body
+                            svar_till = reply.RepliedComment == null ? $"trådstart, {thread.Title} av {thread.CreatedBy.UserName}" : $"inlägg, {reply.RepliedComment.Title} av {(reply.RepliedComment.Author == null ? "Anonym" : $"{reply.RepliedComment.Author.UserName}")}",
 
+                            titel = reply.Title,
+                            text = reply.Body,
+                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
+                            datum = reply.DatePosted.ToString("dd/MM/yy HH:mm")
                         }).ToList()
                     })
                 }).ToList()
@@ -122,6 +130,7 @@ namespace SnackisForum.Pages.api
                                               .Include(sub => sub.Threads)
                                                   .ThenInclude(thread => thread.Replies)
                                                        .ThenInclude(reply => reply.RepliedComment)
+                                                        .ThenInclude(replied => replied.Author)
                                               .Include(sub => sub.Threads)
                                                   .ThenInclude(thread => thread.Replies)
                                                       .ThenInclude(reply => reply.Author)
@@ -134,6 +143,7 @@ namespace SnackisForum.Pages.api
                 sub_namn = sub.Name,
                 tradar = sub.Threads.Select(thread => new
                 {
+                    trad_id = thread.ID,
                     titel = thread.Title,
                     tradstart = thread.Body,
                     skapare = thread.CreatedBy.UserName,
@@ -141,12 +151,12 @@ namespace SnackisForum.Pages.api
                     svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                     {
                         svar_nr = index + 1,
-                        svar_till = reply.RepliedComment == null ? "trådstart" : "inlägg",
-                        anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
-                        datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
-                        titel = reply.Title,
-                        text = reply.Body
+                        svar_till = reply.RepliedComment == null ? $"trådstart, {thread.Title} av {thread.CreatedBy.UserName}" : $"inlägg, {reply.RepliedComment.Title} av {(reply.RepliedComment.Author == null ? "Anonym" : $"{reply.RepliedComment.Author.UserName}")}",
 
+                        titel = reply.Title,
+                        text = reply.Body,
+                        anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
+                        datum = reply.DatePosted.ToString("dd/MM/yy HH:mm")
                     }).ToList()
                 })
             }).ToList();
@@ -190,6 +200,7 @@ namespace SnackisForum.Pages.api
                     sub_namn = sub.Name,
                     tradar = sub.Threads.Select(thread => new
                     {
+                        trad_id = thread.ID,
                         titel = thread.Title,
                         tradstart = thread.Body,
                         skapare = thread.CreatedBy.UserName,
@@ -197,13 +208,12 @@ namespace SnackisForum.Pages.api
                         svar = thread.Replies.OrderBy(reply => reply.DatePosted).Select((reply, index) => new
                         {
                             svar_nr = index + 1,
-                            svar_id = reply.ID,
-                            svar_till = reply.RepliedComment == null ? "trådstart" : "id=" + reply.RepliedComment.ID,
-                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
-                            datum = reply.DatePosted.ToString("dd/MM/yy HH:mm"),
-                            titel = reply.Title,
-                            text = reply.Body
+                            svar_till = reply.RepliedComment == null ? $"trådstart, {thread.Title} av {thread.CreatedBy.UserName}" : $"inlägg, {reply.RepliedComment.Title} av {(reply.RepliedComment.Author == null ? "Anonym" : $"{reply.RepliedComment.Author.UserName}")}",
 
+                            titel = reply.Title,
+                            text = reply.Body,
+                            anvandare = reply.Author == null ? "Anonym" : reply.Author.UserName,
+                            datum = reply.DatePosted.ToString("dd/MM/yy HH:mm")
                         }).ToList()
                     })
                 }).ToList()

@@ -266,7 +266,7 @@ $(document).ready(function () {
         console.log("mouse left messages");
         $('.messages-icon').text("markunread");
     });
-    $('.messages').hover(function () {
+    $('.messages').mouseenter(function () {
         console.log("hovered over messages");
         $('.messages-icon').text("drafts");
     });
