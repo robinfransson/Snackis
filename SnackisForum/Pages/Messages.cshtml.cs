@@ -37,6 +37,7 @@ namespace SnackisForum.Pages
                                       .Include(Chat => Chat.Messages)
                                       .Include(chat => chat.Participant1)
                                       .Include(chat => chat.Participant2)
+                                      .AsSplitQuery()
                                       .ToList();
                 return Page();
             }

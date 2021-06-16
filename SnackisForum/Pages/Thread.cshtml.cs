@@ -49,7 +49,8 @@ namespace SnackisForum.Pages
                                         .Include(thread => thread.Replies)
                                             .ThenInclude(replies => replies.Author)
                                             .Include(thread => thread.Parent)
-                                     .FirstOrDefault();
+                                        .AsSplitQuery()
+                                        .FirstOrDefault();
             if (Thread is null)
             {
                 return RedirectToPage("/");

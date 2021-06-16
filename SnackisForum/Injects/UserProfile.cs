@@ -20,6 +20,7 @@ namespace SnackisForum.Injects
                                           _context.Chats
                                           .Where(chat => chat.Participant1 == CurrentUser || chat.Participant2 == CurrentUser)
                                           .Include(chat => chat.Messages)
+                                          .AsSplitQuery()
                                           .AsEnumerable()
                                           .Sum(chat => chat.Messages.Count(message => !message.HasBeenViewed && message.Sender != Username));
 

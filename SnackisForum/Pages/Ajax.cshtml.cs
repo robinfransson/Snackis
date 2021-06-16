@@ -210,6 +210,7 @@ namespace SnackisForum.Pages
                                           .Include(chat => chat.Messages)
                                           .Include(chat => chat.Participant1)
                                           .Include(chat => chat.Participant2)
+                                          .AsSplitQuery()
                                           .FirstOrDefault();
 
             if (chatModel == null || !chatModel.Messages.Any())
@@ -230,7 +231,9 @@ namespace SnackisForum.Pages
             var reciever = await _context.Users.FirstOrDefaultAsync(user => user.UserName == recipient);
             var currentUser = await _context.Users.FirstOrDefaultAsync(user => user.UserName == _userProfile.Username);
             Chat chat = await _context.Chats.Where(chat => chat.Participant1 == reciever && chat.Participant2 == currentUser || chat.Participant2 == reciever && chat.Participant1 == currentUser)
-                                      .Include(chat => chat.Messages).FirstOrDefaultAsync();
+                                            .Include(chat => chat.Messages)
+                                            .AsSplitQuery()
+                                            .FirstOrDefaultAsync();
 
             chat.Messages.Add(new()
             {
@@ -291,6 +294,7 @@ namespace SnackisForum.Pages
                                   .Include(Chat => Chat.Messages)
                                   .Include(chat => chat.Participant1)
                                   .Include(chat => chat.Participant2)
+                                  .AsSplitQuery()
                                   .ToListAsync();
             int newMessages = model.Sum(model => model.Messages.Count(message => !message.HasBeenViewed && message.Sender != _userProfile.Username));
             if (newMessages != unreadMessages)
@@ -319,6 +323,7 @@ namespace SnackisForum.Pages
                                             .Include(Chat => Chat.Messages)
                                             .Include(chat => chat.Participant1)
                                             .Include(chat => chat.Participant2)
+                                            .AsSplitQuery()
                                             .ToListAsync();
             int newMessages = model.Sum(model => model.Messages.Count(message => !message.HasBeenViewed && message.Sender != _userProfile.Username));
             return new(new { messages = newMessages > 9 ? "9+" : $"{newMessages}" });
@@ -378,8 +383,13 @@ namespace SnackisForum.Pages
                 var forum = await _context.Forums.Where(forum => forum.ID == id)
                                                  .Include(forum => forum.Subforums)
                                                     .ThenInclude(subforum => subforum.Threads)
-                                                        .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
-                var reports = await _context.Reports.Include(report => report.ReportedReply).Include(report => report.ReportedThread).ToListAsync();
+                                                        .ThenInclude(thread => thread.Replies)
+                                                .AsSplitQuery()
+                                                .FirstOrDefaultAsync();
+                var reports = await _context.Reports.Include(report => report.ReportedReply)
+                                                    .Include(report => report.ReportedThread)
+                                                    .AsSplitQuery()
+                                                    .ToListAsync();
                 foreach(var subforum in forum.Subforums)
                 {
                     foreach (var thread in subforum.Threads)
@@ -418,9 +428,14 @@ namespace SnackisForum.Pages
             {
                 var subforum = await _context.Subforums.Where(subforum => subforum.ID == id)
                                                  .Include(forum => forum.Threads)
-                                                 .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
+                                                 .ThenInclude(thread => thread.Replies)
+                                                 .AsSplitQuery()
+                                                 .FirstOrDefaultAsync();
 
-                var reports = await _context.Reports.Include(report => report.ReportedReply).Include(report => report.ReportedThread).ToListAsync();
+                var reports = await _context.Reports.Include(report => report.ReportedReply)
+                                                    .Include(report => report.ReportedThread)
+                                                    .AsSplitQuery()
+                                                    .ToListAsync();
 
 
 

@@ -54,6 +54,7 @@ namespace SnackisForum.Pages
                 var subforum = await _context.Subforums.Where(sub => sub.ID == id)
                                                        .Include(sub => sub.Threads)
                                                        .ThenInclude(thread => thread.Replies)
+                                                       .AsSplitQuery()
                                                        .FirstOrDefaultAsync();
                 var user = await _userManager.GetUserAsync(User);
 

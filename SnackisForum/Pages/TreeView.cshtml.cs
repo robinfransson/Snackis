@@ -80,7 +80,8 @@ namespace SnackisForum.Pages
                                               .ThenInclude(subforum => subforum.Threads)
                                               .ThenInclude(thread => thread.Replies)
                                                  .ThenInclude(replies => replies.Author)
-                                                 .AsSingleQuery().ToListAsync();
+                                                 .AsSplitQuery()
+                                                 .ToListAsync();
             var forums = Forum.Select(forum => new
             {
                 id = "forum-" + forum.ID,
@@ -308,6 +309,7 @@ namespace SnackisForum.Pages
             var thread = _context.Threads.Where(thread => thread.ID == threadID).
                 Include(thread => thread.Replies)
                 .Include(thread => thread.Parent)
+                .AsSplitQuery()
                 .FirstOrDefault();
             thread.Replies.Add(Reply);
             int changes = await _context.SaveChangesAsync();
@@ -347,6 +349,7 @@ namespace SnackisForum.Pages
                 .Include(reply => reply.Author)
                 .Include(reply => reply.Thread)
                 .Include(reply => reply.RepliedComment)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync();
             return Partial("_ReplyModal", comment);
         }

@@ -41,6 +41,7 @@ namespace SnackisForum.Pages.Admin
                                             .ThenInclude(reply => reply.Author)
                                           .Include(report => report.ReportedThread)
                                             .ThenInclude(thread => thread.CreatedBy)
+                                            .AsSplitQuery()
                                           .OrderByDescending(report => report.DateReported)
                                           .OrderByDescending(report => !report.ActionTaken).ToList();
                 Users = _context.Users.Count();
