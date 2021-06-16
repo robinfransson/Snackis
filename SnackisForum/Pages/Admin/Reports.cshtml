@@ -72,7 +72,7 @@
                         @if (reportIsThread)
                         {
 
-                            <a href="@Url.Content($"~/treeview?nodeid=thread-{report.ReportedThread.ID}")" style="text-decoration:none;">
+                            <a href="@Url.Content($"~/treeview?nodeid=thread-{report.ReportedThread.ID}")" target="_blank" style="text-decoration:none;">
                                 <div class=" material-icons-outlined noselect">
                                     info
                                 </div>
@@ -80,7 +80,7 @@
                         }
                         else
                         {
-                            <a href="@Url.Content($"~/treeview?nodeid=reply-{report.ReportedReply.ID}")" style="text-decoration:none;">
+                            <a href="@Url.Content($"~/treeview?nodeid=reply-{report.ReportedReply.ID}")" target="_blank" style="text-decoration:none;">
                                 <div class=" material-icons-outlined noselect">
                                     info
                                 </div>

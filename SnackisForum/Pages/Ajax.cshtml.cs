@@ -379,7 +379,31 @@ namespace SnackisForum.Pages
                                                  .Include(forum => forum.Subforums)
                                                     .ThenInclude(subforum => subforum.Threads)
                                                         .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
+                var reports = await _context.Reports.Include(report => report.ReportedReply).Include(report => report.ReportedThread).ToListAsync();
+                foreach(var subforum in forum.Subforums)
+                {
+                    foreach (var thread in subforum.Threads)
+                    {
+                        foreach (var reply in thread.Replies)
+                        {
+                            var reportedReply = reports.Where(report => report.ReportedReply == reply).FirstOrDefault();
+                            if (reportedReply != null)
+                            {
+                                _context.Reports.Remove(reportedReply);
+                            }
+                        }
+                        _context.Replies.RemoveRange(thread.Replies);
 
+                        var reprotedThread = reports.Where(report => report.ReportedThread == thread).FirstOrDefault();
+                        if (reprotedThread != null)
+                        {
+                            _context.Reports.Remove(reprotedThread);
+                        }
+                    }
+
+                    _context.Threads.RemoveRange(subforum.Threads);
+                }
+                _context.Subforums.RemoveRange(forum.Subforums);
                 _context.Forums.Remove(forum);
                 await _context.SaveChangesAsync();
             }
@@ -395,6 +419,31 @@ namespace SnackisForum.Pages
                 var subforum = await _context.Subforums.Where(subforum => subforum.ID == id)
                                                  .Include(forum => forum.Threads)
                                                  .ThenInclude(thread => thread.Replies).FirstOrDefaultAsync();
+
+                var reports = await _context.Reports.Include(report => report.ReportedReply).Include(report => report.ReportedThread).ToListAsync();
+
+
+
+                foreach (var thread in subforum.Threads)
+                {
+                    foreach(var reply in thread.Replies)
+                    {
+                        var reportedReply = reports.Where(report => report.ReportedReply == reply).FirstOrDefault();
+                        if(reportedReply != null)
+                        {
+                            _context.Reports.Remove(reportedReply);
+                        }
+                    }
+                    _context.Replies.RemoveRange(thread.Replies);
+
+                    var reportedThread = reports.Where(report => report.ReportedThread == thread).FirstOrDefault();
+                    if (reportedThread != null)
+                    {
+                        _context.Reports.Remove(reportedThread);
+                    }
+                }
+
+                _context.Threads.RemoveRange(subforum.Threads);
                 _context.Subforums.Remove(subforum);
                 await _context.SaveChangesAsync();
             }
